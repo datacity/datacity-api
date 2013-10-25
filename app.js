@@ -1,18 +1,10 @@
-///<reference path='typescript-node-definitions/node.d.ts'/>
-///<reference path='typescript-node-definitions/mongodb.d.ts'/>
-///<reference path='typescript-node-definitions/express.d.ts'/>
-
 var express = require('express');
-ElasticSearchClient = require('elastisearchclient');
 
-var serverOptions = {
-    host: 'localhost',
-    port: 9200,
-    pathPrefix: 'optional pathPrefix',
-    secure: true || false
-};
+var sage = require("sage");
+var esi = sage('http://localhost:9200/batiment');
 
-var app = express.createServer();
+var est = esi.type('service-public');
+var app = express();
 app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -23,24 +15,20 @@ app.configure('development', function () {
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
-var qryObj = { "query": { "match_all": {} } };
-var elasticSearchClient = new ElasticSearchClient(serverOptions);
-
 app.get('/', function (req, res) {
-    /* elasticSearchClient.search('batiment', 'servicepublic', qryObj)
-    .on('data', function (data) {
-    console.log(JSON.parse(data))
-    })
-    .on('done', function () {
-    //always returns 0 right now
-    })
-    .on('error', function (error) {
-    console.log(error)
-    })
-    .exec()*/
+    est.post({
+        "test" : "1",
+        "test2": "2"
+        }, function(err, result) {
+            console.log(result);
+        });
+    res.send("hello world !");
 });
 
-app.listen(3000, function () {
+app.listen(process.env.PORT, function () {
     console.log('Vous avez correctement cree nouveaux serveur!!!');
 });
+
+
+
 
