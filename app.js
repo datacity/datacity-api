@@ -1,10 +1,18 @@
 var express = require('express');
+var app = express();
 
 var sage = require("sage");
 var esi = sage('http://localhost:9200/batiment');
 
+esi.create(function(err, result) {
+    if (result.error)
+        console.log('Index was already created')
+    else
+        console.log(result);
+});
+
 var est = esi.type('service-public');
-var app = express();
+
 app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -17,18 +25,16 @@ app.configure('development', function () {
 
 app.get('/', function (req, res) {
     est.post({
-        "test" : "1",
-        "test2": "2"
+        "Column1" : "c1FirstRow",
+        "Column2": "c2FirstRow"
         }, function(err, result) {
-            console.log(result);
+            if (result.error)
+                res.send('Error on post : ' + err);
+            else
+                res.send('Index Sucessfully created!' + result);
         });
-    res.send("hello world !");
 });
 
 app.listen(process.env.PORT, function () {
-    console.log('Vous avez correctement cree nouveaux serveur!!!');
+    console.log('Listening on process.env.PORT : ' + process.env.PORT);
 });
-
-
-
-
