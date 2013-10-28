@@ -1,14 +1,14 @@
 var express = require('express');
 var app = express();
-
+var colors = require('colors');
 var sage = require("sage");
 var esi = sage('http://localhost:9200/batiment');
 
 esi.create(function(err, result) {
     if (result.error)
-        console.log('Index was already created')
+        console.log('Index was already created'.red)
     else
-        console.log(result);
+        console.log(result.blue);
 });
 
 var est = esi.type('service-public');
@@ -29,9 +29,9 @@ app.get('/', function (req, res) {
         "Column2": "c2FirstRow"
         }, function(err, result) {
             if (result.error)
-                res.send('Error on post : ' + err);
+                res.send('<b>Error on post : ' + err + '</b>');
             else
-                res.send('Index Sucessfully created!' + result);
+                res.send('<b>Document Sucessfully created!' + result + '</b>');
         });
 });
 
