@@ -8,7 +8,7 @@ esi.create(function(err, result) {
     if (result.error)
         console.log('Index was already created'.red)
     else
-        console.log(result.blue);
+        console.log(result);
 });
 
 var est = esi.type('service-public');
