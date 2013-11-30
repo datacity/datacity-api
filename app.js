@@ -4,8 +4,9 @@ var colors = require('colors');
 var sage = require("sage");
 var esi = sage('http://localhost:9200/batiment');
 var fs = require('fs');
+var readline = require('readline');
+var stream = require('stream');
 var parserFactory = require('generic-parser');
-
 
 esi.create(function(err, result) {
     if (result.error)
@@ -19,20 +20,9 @@ var est = esi.type('service-public');
 app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
-    app.use(express.bodyParser({ keepExtensions: true}));
+    app.use(express.bodyParser({uploadDir:'./tmp', keepExtensions: true}));
+     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     app.use(express.static(__dirname + '/public'));
-});
-
-app.use(function(req, res, next){
-  if (req.is('text/*') || req.is('application/*')) {
-    req.text = '';
-    //req.setEncoding('utf8');
-    req.on('data', function(chunk){ req.text += chunk });
-    console.log(req.text);
-    req.on('end', next);
-  } else {
-    next();
-  }
 });
 
 app.all('*', function(req, res, next) {
@@ -42,27 +32,52 @@ app.all('*', function(req, res, next) {
   next();
 });
 
-/*var parserFactoryInstance = new parserFactory("test.csv", "csv");
-parserFactoryInstance.createParser();*/
-
 app.post('/upload', function(req, res) {
-   var ext = req.headers['content-type'].split(';')[0].split('/')[0];
-    /*if (req.body.length <= 2 && req.text.length <= 2)
-        return;*/
- fs.writeFile('test.xls', req.text, function (err) {
-  if (err) throw err;
-  console.log('It\'s saved!');
-});
-    console.log(req.text);
-  console.log(req.headers['content-type'].split(';')[0].split('/')[0]);
- /* var parserFactoryInstance = new parserFactory(req.body.length > 2 ? req.body : req.text, ext);*/
-  console.log(parserFactory);
+    var fileName = req.files.file.name.split('.');
+    var name = fileName[0];
+    var type = fileName[fileName.length - 1];
+ 
+    console.log("voici le nom du file : " + name);
+    console.log("voici le type du file: " + type);
+    console.log("voici l'upload du file: " + req.files.file.path);
+ 
+    var is = fs.createReadStream(req.files.file.path);
+    var os = new stream();
+    var rl = readline.createInterface(is, os);
+    fs.writeFile(req.files.file.name, '', function (err) {
+    if (err) throw err;
+        console.log('It\'s saved!');
+    });
+    
+    rl.on('line', function(line) {
+        fs.appendFile(req.files.file.name, line, function (err) {
+            if (err) throw err;
+            console.log('The "data to append" was appended to file!');
+        });
+    });
+
+    rl.on('close', function() {
+        // do something on finish here
+    });
+    
+    
+    /*var data;
+    is.on('data', function(sdata) {
+        console.log("on rentre dans on : " + sdata);
+        data += sdata;
+    });
+
+    is.on('end', function() {
+        console.log(data);
+    });*/
+
+    
 });
 
-app.configure('development', function () {
-    app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
 
+/**
+ * Exemple d'un rajout de document dans l'index d'elasticsearch
+ */
 app.get('/', function (req, res) {
     est.post({
         "Column1" : "c1FirstRow",
@@ -76,5 +91,5 @@ app.get('/', function (req, res) {
 });
 
 app.listen(process.env.PORT, function () {
-    console.log('Listening on process.env.PORT : ' + process.env.PORT);
+    console.log('Listening on process.env.PORT : '.blue + process.env.PORT);
 });
