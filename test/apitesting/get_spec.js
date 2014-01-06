@@ -21,6 +21,8 @@ frisby.create('Get simple test')
     .expectJSON({
         testdeep: {1: "cool", 2: "pascool"}
     })
+    .inspectJSON()
+    .inspectBody()
     .toss();
 
     

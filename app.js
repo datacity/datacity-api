@@ -7,6 +7,7 @@ var fs = require('fs');
 var readline = require('readline');
 var stream = require('stream');
 var parserFactory = require('generic-parser');
+var rest = require('restler');
 
 esi.create(function(err, result) {
     if (result.error)
@@ -38,10 +39,11 @@ app.post('/upload', function(req, res) {
     var name = fileName[0];
     var type = fileName[fileName.length - 1];
  
-    console.log("voici le nom du file : " + name);
+    console.log("voici le nomddd du file : " + name);
     console.log("voici le type du file: " + type);
     console.log("voici l'upload du file: " + req.files.file.path);
- 
+    console.log("nom total : " + req.files.file.name);
+    
     var is = fs.createReadStream(req.files.file.path);
     var os = new stream();
     var rl = readline.createInterface(is, os);
@@ -50,31 +52,46 @@ app.post('/upload', function(req, res) {
         console.log('It\'s saved!');
     });
     
-    rl.on('line', function(line) {
-        fs.appendFile(req.files.file.name, line, function (err) {
-            if (err) throw err;
-            console.log('The "data to append" was appended to file!');
-        });
-    });
+    /*rl.on('line', function(line) {
+       console.log("line" + line);
+    });*/
 
-    rl.on('close', function() {
+    /*rl.on('close', function() {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end("Ca a fonctionné");
         // do something on finish here
-    });
+    });*/
     
-    
-    /*var data;
+    var data = "";
     is.on('data', function(sdata) {
         console.log("on rentre dans on : " + sdata);
         data += sdata;
     });
 
     is.on('end', function() {
-        console.log(data);
-    });*/
+       fs.appendFile(req.files.file.name, data, function (err) {
+            if (err) throw err;
+            console.log(err);
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end("Ca a fonctionné");
+        });
+    });
 
     
 });
 
+app.post("/testpost", function (req, res) {
+  
+  rest.post('http://localhost:4567/upload', {
+    multipart: true,
+    data: {
+        "file": rest.file('./test/files/servicePublic.json', null, 153469, null, 'text/csv')
+    }
+    }).on('complete', function(data, response) {
+        res.writeHead(response.statusCode, {'Content-Type': 'text/plain'});
+        res.end("Ca a fonctionné");
+    });
+});
 
 /**
  * Exemple d'un rajout de document dans l'index d'elasticsearch
