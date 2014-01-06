@@ -2,7 +2,8 @@
 .DS_Store
 
 #Node.JS modules
-node_modules
+node_modules/*
+!/node_modules/generic-parser
 
 #Temporary files
 *~
