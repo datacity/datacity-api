@@ -2,7 +2,7 @@
 
 lien de la doc :
 
-* http://
+* https://github.com/raphael-amar/datacity-api/tree/master/test/apitesting
 
 Vous devez être sur un environnement Unix. Toutes les versions de windows 8 ainsi que cygwin ne permettent pas d'installer correctement les paquets npm nécéssaires à **cloud9** (npm install). Si vous voulez quand même tenter votre chance, je vous souhaite bon courage.
 
