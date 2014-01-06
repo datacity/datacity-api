@@ -63,5 +63,11 @@ Retournez sur cette url :
 
 Un nouvel index a été créé et elasticsearch est en parfaite hosmose avec l'environnement node.js dans l'ide cloud9. Il ne reste plus qu'a mettre en place les modules, penser à l'archtecture et se servir de tout ces outils! En route les amis !
 
+## Démarrage de l'API
+
+Avant de lancer le serveur, il faut installer les dépendances liées à node.js .
+
+    npm install
+
 ## Documentation API
 
