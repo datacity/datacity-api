@@ -27,4 +27,4 @@ pour lancer un fichier en particulier :
 
     jasmine-node "FILE"
     
-* Attention /!\ Ne lancez pas app.js depuis node !
+* Attention /!\ Ne lancez pas app.js depuis cloud9 !

@@ -6,9 +6,13 @@
   "author": "DataCity",
   "dependencies": {
     "express": "~3.4.7",
-    "colors": "~0.6.2",
-    "sage": "~0.4.2",
+    "colors": ">=0.6.2",
+    "sage": ">=0.4.2",
     "stream": "0.0.1",
-    "readline": "0.0.3"
+    "readline": "0.0.3",
+    "restler": "~3.1.0",
+    "nodeunit": ">=0.8.2",
+    "frisby": ">=0.7.5",
+    "elasticsearchclient":">=0.5.1"
   }
 }
