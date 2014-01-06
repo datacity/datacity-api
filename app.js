@@ -17,6 +17,7 @@ esi.create(function(err, result) {
 
 var est = esi.type('service-public');
 
+
 app.configure(function () {
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -78,8 +79,11 @@ app.post('/upload', function(req, res) {
 /**
  * Exemple d'un rajout de document dans l'index d'elasticsearch
  */
-app.get('/', function (req, res) {
-    est.post({
+app.get('/test', function (req, res) {
+    console.log("on fait une requête sur test!!!");
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end('{"document": true, "data": "success", "testdeep": {"1": "cool", "2": "pascool"}}');
+    /*est.post({
         "Column1" : "c1FirstRow",
         "Column2": "c2FirstRow"
         }, function(err, result) {
@@ -87,7 +91,7 @@ app.get('/', function (req, res) {
                 res.send('<b>Error on post : ' + err + '</b>');
             else
                 res.send('<b>Document Sucessfully created!' + result + '</b>');
-        });
+        });*/
 });
 
 app.listen(process.env.PORT, function () {
