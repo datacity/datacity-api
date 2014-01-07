@@ -23,7 +23,7 @@ La version 10 de node.js n'est pas encore suportée (ca ne saurait tarder).
 
 Avant de lancer cloud9, faites un clone sur le dépot datacity api :
 
-    git clone https://github.com/raphael-amar/datacity-api.git
+    git clone git@github.com:raphael-amar/datacity-api.git
 
 Si vous ne pouvez pas cloner le dépôt, c'est normal, c'est un dépôt privé. Envoyez moi votre mail pour que je vous ajoute.
 
@@ -31,7 +31,7 @@ Si vous ne pouvez pas cloner le dépôt, c'est normal, c'est un dépôt privé. 
 
 l'option -w permet de spécifer votre workspace :
 
-    node server.js -w ~/chemin/depot-datacity.
+    bin/cloud9.sh -w depot-datacity/
     firefox http://localhost:3131
 
 ## Installation de elasticsearch

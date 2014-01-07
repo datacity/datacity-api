@@ -5,5 +5,9 @@
 node_modules/*
 !/node_modules/generic-parser
 
+#Cloud9
+.settings
+.c9revisions/
+
 #Temporary files
 *~
