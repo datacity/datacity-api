@@ -3,7 +3,7 @@
 
 #Node.JS modules
 node_modules/*
-!/node_modules/generic-parser
+!/node_modules/genericparser
 
 #Cloud9
 .settings
