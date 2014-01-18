@@ -1,0 +1,21 @@
+{
+    "result" : [{
+        "id": 4,
+        "adresse": [ {"ville": "montpellier", "codepostal": "34000"},
+                     {"ville": "lunel", "codepostal": "34400"} ],
+        "tags": {
+            "categorie": "pop",
+            "style": "hasbeen"
+        }
+    },
+    {
+        "id": 5,
+        "adresse": [ {"ville": "Lyon", "codepostal": "67000"},
+                     {"ville": "Marseilles", "codepostal": "40000"} ],
+        "tags": {
+            "categorie": "rock",
+            "style": "hard"
+        }
+    }
+    ]
+}
