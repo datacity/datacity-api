@@ -1,0 +1,90 @@
+ID,C,8;NOM,C,26;LOCALIS,C,70;QUARTIER,C,32;CANTON,N,5,0;TYPE_D_OPÉ,C,16;MAIT_OUV,C,32;MAIT_OEU,C,32;REAL_,C,32;COUT,N,19,8;CRE_DATE,N,19,8;GESTION_,C,16;COÛT_FONCT,N,19,8;ETAT,C,16
+1;Baumel;place Jean Baumel;Hôpitaux-Facultés;2;création;DAP;DGU;Ent. Jeanjean Namer Thomas;270;1988;GE;0;en fonction
+2;Aiguelongue;Rue  de Montasinos;Hôpitaux-Facultés;3;création;DAP;DGU;Ent. Roure;486;1989;GE;0;en fonction
+3;Grand Mail;Grand mail;La Paillade;9;création;;;Borel;0;1987;GE;0;en fonction
+4;Baroncelli;Parc de baroncelli;La Paillade;9;réaménagement;DGU;DGU;Ent. Jeanjean Sogea;200;1988;GE;0;en fonction
+5;Renaudel;place Renaudel;La Paillade;10;réaménagement;DAP;DGU;Ent TP D' Orques;80;1986;GE;0;en fonction
+6;Galot;Place Marcel Galot;Les Cévennes;10;création;DAP;DGU;Jeanjean;662;1989;GE;0;en fonction
+7;Petit Bard;Square Guillaume Apollinaire;Les Cévennes;7;création;DAP;DGU;Roure;226;1988;GE;0;en fonction
+8;Paul Valery;Route de Lavérune;Croix d'Argent;6;création;DAP;DGU;Jeanjean;330;1988;GE;0;en fonction
+9;Tastavin;Parc de Tastavin;Montpellier Centre;1;création;DAP;DGU;Ent. Jeanjean;15;1987;GE;0;en fonction
+10;Saint Cléophas;rue du Mas Lemasson;Croix d'Argent;6;création;DAP;DGU;Jeanjean Namer Thomas;247;1988;GE;0;en fonction
+11;Saint Martin;Av. du Maréchal Leclerc;Près d'Arènes;5;création;DAP;DGU;Jeanjean Namer Thomas;263;1988;GE;0;en fonction
+12;Tournezy;Place Tibériade;Près d'Arènes;5;création;DAP;DGU;Jeanjean;384;1988;GE;0;en fonction
+13;Parc Rimbaud;Av. de Saint Maur;Montpellier Centre;1;création;DAP;DGU;Ent. Olivier;100;1987;GE;0;en fonction
+14;Pompignane;Avenue Alphonse Juin;Millénaire;4;création;DAP;DGU;Ent. Roure;262;1988;GE;0;en fonction
+15;Z.A.C. de la Fontaine;Celleneuve;La Paillade;10;création;SERM;DGU;Jeanjean;3000;1991;GE;0;en fonction
+16;La Licorne;Place de la Carnourgue;Montpellier Centre;1;réaménagement;;;d'Antoine;0;1776;GE;0;en fonction
+17;Chabaneau;place Chabaneau;Montpellier Centre;1;réaménagement;;;Journet;0;1776;GE;0;en fonction
+18;Préfecture;Place des Martyres de la Résistance;Montpellier Centre;1;réaménagement;;;Ent. Saltet;0;1975;GE;0;en fonction
+19;Marché au fleurs;Place du Marché aux fleurs;Montpellier Centre;1;création;DAP;DGU;Ent. Jeanjean Guinet Derriaz;169;1984;GE;0;en fonction
+20;Saint Roch;place Saint Roch;Montpellier Centre;1;création;DAP;DGU;Guillard Dimicelli Font de Paris;356;1988;GE;0;en fonction
+21;Saint Ravy;Place Saint Ravy;Montpellier Centre;1;réaménagement;DGU;DGU;Saltet;0;1975;GE;0;en fonction
+22;Chambre de Commerce;Grand rue Jean Moulin;Montpellier Centre;1;réaménagement;DGU;DGU;Voinchet;80;1983;GE;0;en fonction
+23;Saint Denis;Place Saint Denis;Montpellier Centre;1;réaménagement;DGU;DGU;Ent. Olivier;35,4;1987;GE;0;en fonction
+24;Jules Ferry;Jules Ferry _ Verdun;Montpellier Centre;1;création;;;Ent. Olivier;0;1988;;0;déposée
+25;Les Trois Graces;Place de la Comédie;Montpellier Centre;1;réaménagement;;;;0;1797;GE;0;en fonction
+27;Gaumont;Place de l'Esplanade;Montpellier Centre;1;création;DAP;DGU;Ent. Olivier;1490;1988;GE;0;en fonction
+28;Corum;Place de l'Esplanade;Montpellier Centre;1;création;DAP;DGU;Ent Olivier;1490;1988;GE;0;en fonction
+29;Verdanson;Place du 11 Novembre;Montpellier Centre;3;création;DAP;DGU;Ent Nazon Jeanjean;2800;1985;GE;0;en fonction
+30;Olympie;Place de l'Olympie;Montpellier Centre;1;création;DAP;DGU;Jeanjean;450;1988;GE;0;en fonction
+31;Monnet;Square Jean Monnet;Montpellier Centre;1;création;DAP;DGU;Ent. Jeanjean Namer Thomas;360;1988;GE;0;en fonction
+32;Les Augustins;rue des Augustins;Montpellier Centre;1;réaménagement;DGU;DGU;;0;1988;GE;0;en fonction
+33;Chapelle neuve;Place de la Chapelle Neuve;Montpellier Centre;1;réaménagement;DGU;DGU;;60;1988;GE;0;en fonction
+34;Jet d'eau;Avenue du Pirée;Montpellier Centre;4;création;DAP;DGU;Ent. E.I.;2000;1988;GE;0;en fonction
+35;Beaux Arts;Rue Jules Grevy;Montpellier Centre;3;création;DAP;DGU;Ent Roure;472;1989;GE;0;en fonction
+36;Babote;Square de la Babote;Montpellier Centre;1;réaménagement;SERM;DIPAN;Ent. Eautheque T.U.E;184;1989;GE;0;en fonction
+37;Babote;Square de la Babote;Montpellier Centre;1;réaménagement;SERM;DIPAN;Ent. Eautheque T.U.E;184;1989;GE;0;en fonction
+38;Saint Anne;Place Saint Anne;Montpellier Centre;1;création;DAP;DGU;Ent Eurofontaines;173;1992;GE;0;en fonction
+39;Edouard Adam;Place Edouard Adam;Montpellier Centre;1;réaménagement;DAP;DGU;Sopel Capelier Anglade Jeanjean;320;1988;GE;0;en fonction
+40;Université;Plan de l'Université;Montpellier Centre;1;création;DAP;DGU;Ent. Escourbiac;82;1989;GE;0;en fonction
+41;Porte de la Blanquière;rue de l'Université;Montpellier Centre;1;création;DAP;DGU;Ent. Celle;150;1989;GE;0;en fonction
+42;Cité Gély;place Etienne Jodelle;Montpellier Centre;3;création;DAP;DGU;Ent. Urbaco;326;1989;GE;0;en fonction
+43;Grand Bassin;Grammont;Millénaire;4;réaménagement;;;;0;1800;GE;0;en fonction
+44;Petit Bassin;Grammont;Millénaire;4;réaménagement;;;;0;1800;GE;0;en fonction
+45;Moulin de l'Evêque;Av. Pierre Mendes France;Montpellier Centre;3;création;SERM;GRANDS TRAVAUX;Ent Colas;0;1991;GE;0;en fonction
+46;Pitot;espace Pitot;Montpellier Centre;10;création;URBAT;MEIER ET GARCIA;Ent Eurofontaines;200;1994;GE;0;en fonction
+100;Hotel Assas;Rue de la vieille Aiguillerie;Montpellier Centre;1;création;DIPAN;DIPAN;;0;1989;DIPAN;0;à l'arrêt
+101;Chanzy;Rue de la Saunerie;Montpellier Centre;1;création;DIPAN;DIPAN;Ent BEC;50;1990;DIPAN;0;en fonction
+102;Peyrou;Promenade du peyrou;Montpellier Centre;1;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+103;Peyrou (gauche);promenade du Peyrou;Montpellier Centre;7;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+104;Peyrou (droite);Promenade du Peyrou;Montpellier Centre;1;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+105;Bassin Champ de Mars;Esplanade Charles de Gaulle;Montpellier Centre;1;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+106;Cascade du Champ de Mars;Esplanade Charles de Gaulle;Montpellier Centre;1;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+107;Bassin du Parc Saint Odile;Route de Mende;Montpellier Centre;3;réaménagement;DIPAN;DIPAN;;0;0;DIPAN;0;en fonction
+108;Bassin de la Guirlande;Parc de la Guirlande;Montpellier Centre;7;réaménagement;DIPAN;DIPAN;;0;1765;DIPAN;0;en fonction
+109;Maison de l'environnement;rue Ferdinand Fabre;Montpellier Centre;1;création;DIPAN;DIPAN;;0;1991;DIPAN;0;en fonction
+200;Plan d'eau d'Alco;Rond point d'Alco;La Paillade;9;création;;;;0;0;Département;0;en fonction
+201;Chateau d'O;Rond point des Moulins;Hôpitaux-Facultés;10;création;;;;0;0;Département;0;en fonction
+111;Plan de l'Olivier;Rue de la Verrerie Basse;Montpellier Centre;1;création;DIPAN;DIPAN;Ent T.U.E.;131;1993;DIPAN;0;en fonction
+110;Square Planchon;rue de la république;Montpellier Centre;1;réaménagement;DIPAN;DIPAN;Ent. Buhler;0;1958;DIPAN;0;en fonction
+47;La Danseuse;Mermoz;Montpellier Centre;1;création;DAP;DGU;Ent. A.T.F;995;1995;GE;0;en fonction
+48;Parrat;Esplanade P. Paraf;Croix d'Argent;8;création;DAP;DGU;Ent. S.D.F. Genet;395;1995;GE;0;en fonction
+49;Le Serpent;Rue Henri Roseau;Croix d'Argent;6;création;DAP;DGU;Ent. L.C.E Cipres;320;1995;GE;0;en fonction
+50;Pagnol;Route de Lavérune;Croix d'Argent;6;création;DAP;DGU;Ent. L.C.E Gaidoz;350;1995;GE;0;en fonction
+51;Jacques Coeur;Av. de la mer;Millénaire;4;création;SERM;;;0;0;GE;0;en fonction
+A;Nombre d'Or;Place du nombre d'Or;Montpellier Centre;3;projet;DAP;DGU;;5000;2000;Projet;0;en projet
+B;Compostelle;Place de Compostelle;Montpellier Centre;1;projet;DAP;;;0;2000;Projet;0;en projet
+C;Albert 1 er;Place Albert 1 er;Montpellier Centre;2;projet;SMTU;GITRAM;;3000;2000;Projet;0;en projet
+D;Godechot;Place Marcel Godechot;Montpellier Centre;2;projet;SMTU;GITRAM;;3800;0;Projet;0;en projet
+E;Emile Martin;Place Emile Martin;Hôpitaux-Facultés;2;projet;SMTU;GITRAM;;140;2000;Projet;0;en projet
+F;Occitanie;Avenue d'Occitanie;Hôpitaux-Facultés;10;projet;SMTU;GITRAM;;900;2000;Projet;0;en projet
+G;Corum (escalier);rue du prix;Montpellier Centre;3;Projet;SMTU;GITRAM;;0;2000;Projet;0;en projet
+H;Aéroport International;Carrefour de l'Aéroport International;Montpellier Centre;3;Projet;;;;0;2001;Projet;0;en projet
+I;Les trois Ephèbes;Esplanade Charles de Gaulle;Montpellier Centre;3;projet;;;;0;2001;Projet;0;en projet
+J;Richter;Rue Vendémiaire;Millénaire;4;;;;;2000;0;Projet;0;en projet
+K;Canourgue;rue St Pierre / rue Ste Croix;Montpellier Centre;1;projet;DAP;;;0;0;Projet;0;en projet
+L;Saint Pierre;Place Saint Pierre;Montpellier Centre;1;projet;DAP;;;0;0;Projet;0;en projet
+M;Mansart;Place François Mansart;La Paillade;9;projet;DAP;;;0;0;Projet;0;en projet
+N;Faulquier;Place Faulquier;Montpellier Centre;3;Projet;DAP;;;700;2000;Projet;0;en projet
+112;Parc de Bagatelle;rue du Sichuan;Croix d'Argent;8;création;DIPAN;DIPAN;;0;1990;DIPAN;0;en fonction
+26;Le mur d'eau;Place de la Comédie;Montpellier Centre;1;déposée;;;;0;1998;;0;déposée
+113;OPAC;Place Cardinal Marty;La Paillade;9;;;;;0;0;OPAC;0;en fonction
+O;Pavelet;Avenue Pavelet / rue des sabines;Croix d'Argent;6;projet;;;;500;2000;Projet;0;en projet
+P;parvis Bagatelle;Rue du Cheng-Du;Croix d'Argent;8;projet;;;;300;2000;Projet;0;en projet
+Q;Evéché;Rue Jean Vachet;Près d'Arènes;5;projet;;;;250;2000;Projet;0;en projet
+R;Mas Drevon;Boulevard Pedro de Luna;Croix d'Argent;6;projet;;;;350;2000;Projet;0;en projet
+S;Hauts de Massane;Allée des Hauts de Montpellier;La Paillade;9;projet;;;;350;2000;Projet;0;en projet
+V;Esplanade;Esplanade de l'Europe;Montpellier Centre;3;projet;;;;0;0;Projet;0;en projet
+U;Petit train;Rond point des Près d'Arènes;Près d'Arènes;5;projet;;;;3000;2001;Projet;0;en projet
+T;Croix d'Argent;;Croix d'Argent;0;;;;;250;2000;Projet;0;en projet
