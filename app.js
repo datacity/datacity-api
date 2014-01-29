@@ -6,7 +6,7 @@ var esi = sage('http://localhost:9200/batiment');
 var fs = require('fs');
 var readline = require('readline');
 var stream = require('stream');
-var parserFactory = require('generic-parser');
+var GenericParser = require('genericparser');
 var rest = require('restler');
 
 esi.create(function(err, result) {
@@ -34,50 +34,21 @@ app.all('*', function(req, res, next) {
   next();
 });
 
-app.post('/upload', function(req, res) {
-    var fileName = req.files.file.name.split('.');
-    var name = fileName[0];
-    var type = fileName[fileName.length - 1];
- 
-    console.log("voici le nomddd du file : " + name);
-    console.log("voici le type du file: " + type);
+app.post('/parse/file', function(req, res) {
     console.log("voici l'upload du file: " + req.files.file.path);
     console.log("nom total : " + req.files.file.name);
     
-    var is = fs.createReadStream(req.files.file.path);
-    var os = new stream();
-    var rl = readline.createInterface(is, os);
-    fs.writeFile(req.files.file.name, '', function (err) {
-    if (err) throw err;
-        console.log('It\'s saved!');
+    if (!req || !req.files || !req.files.file || !req.files.file.name) {
+        res.writeHead(200, {'Content-Type': "application/json"});
+        res.end("{'success' : false}");
+        return;
+    }
+    var fileTab = req.files.file.name.split(".");
+    var type = fileTab[fileTab.length-1];
+    GenericParser(type).parse(req.files.file.path, false, function(result) {
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify(result));
     });
-    
-    /*rl.on('line', function(line) {
-       console.log("line" + line);
-    });*/
-
-    /*rl.on('close', function() {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end("Ca a fonctionné");
-        // do something on finish here
-    });*/
-    
-    var data = "";
-    is.on('data', function(sdata) {
-        console.log("on rentre dans on : " + sdata);
-        data += sdata;
-    });
-
-    is.on('end', function() {
-       fs.appendFile(req.files.file.name, data, function (err) {
-            if (err) throw err;
-            console.log(err);
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end("Ca a fonctionné");
-        });
-    });
-
-    
 });
 
 app.post("/testpost", function (req, res) {
