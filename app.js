@@ -6,6 +6,7 @@
 var express = require('express');
 var routes = require('./routes');
 var files = require('./routes/files');
+var users = require('./routes/users');
 var http = require('http');
 var path = require('path');
 
@@ -31,8 +32,17 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/test/upload', routes.testUpload);
-app.post('/file', files.post);
+
+// Files (origin file only !! not parsed)
 app.get('/file/:id', files.get);
+app.post('/file/upload', files.post);
+
+// Users
+//app.post('/user/:id/upload', users.upload);
+//app.get('/user/:id/files', users.files);
+
+// Categories
+// app.get('/category', categories.getCategories);
 
 
 http.createServer(app).listen(app.get('port'), function(){

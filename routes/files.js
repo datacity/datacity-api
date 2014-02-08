@@ -1,4 +1,5 @@
 var formidable = require('formidable');
+var genericParser = require('genericparser');
 var fs = require('fs');
 
 var uploadDir = "./uploads/";
