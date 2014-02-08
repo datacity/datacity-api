@@ -1,17 +1,13 @@
 {
-  "name": "DataCityAPI",
+  "name": "application-name",
   "version": "0.0.1",
-  "description": "API de DataCity",
-  "main": "app.js",
-  "author": "DataCity",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
-    "express": "~3.4.7",
-    "colors": ">=0.6.2",
-    "sage": ">=0.4.2",
-    "stream": "0.0.1",
-    "readline": "0.0.3",
-    "restler": "~3.1.0",
-    "supertest": ">=0.9.0",
-    "mocha": "1.17.0"
+    "express": "~3.4.8",
+    "ejs": "~0.8.5",
+    "formidable": "~1.0.14"
   }
 }
