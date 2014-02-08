@@ -1,0 +1,16 @@
+type,osm_id,osm_url,addr:postcode,address,amenity,brand,ethanol,fuel:1_25,fuel:1_50,fuel:GTL_diesel,fuel:HGV_diesel,fuel:biodiesel,fuel:biogas,fuel:cng,fuel:diesel,fuel:e10,fuel:e85,fuel:electricity,fuel:lpg,fuel:octane_100,fuel:octane_91,fuel:octane_95,fuel:octane_98,is_in,layer,name,operator,wheelchair
+Stations-Services,76856401,http://www.openstreetmap.org/browse/node/76856401,,,fuel,,,,,,,,,,,,,,,,,,,,,,,
+Stations-Services,1252111392,http://www.openstreetmap.org/browse/node/1252111392,,,fuel,,,,,,,,,,,,,,,,,,,,,Esso Express,,
+Stations-Services,280687718,http://www.openstreetmap.org/browse/node/280687718,,,fuel,,,,,,,,,,,,,,,,,,,,,,Total,no
+Stations-Services,1252101925,http://www.openstreetmap.org/browse/node/1252101925,,,fuel,Total,,,,,,,,,,,,,,,,,,,,,,
+Stations-Services,280948806,http://www.openstreetmap.org/browse/node/280948806,,,fuel,,,,,,,,,,,,,,,,,,,,1,,,
+Stations-Services,916939256,http://www.openstreetmap.org/browse/node/916939256,,,fuel,,,,,yes,,,,,yes,,,,yes,,,yes,yes,,,Géant,,
+Stations-Services,293645445,http://www.openstreetmap.org/browse/node/293645445,,,fuel,,,,,,,,,,,,,,,,,,,,,,,
+Stations-Services,25211067,http://www.openstreetmap.org/browse/node/25211067,34070,Av de Vannières,fuel,,,,,,,,,,,,,,yes,,,,,MONTPELLIER,,Station Elf,Elf,
+Stations-Services,1347136557,http://www.openstreetmap.org/browse/node/1347136557,,,fuel,,yes,,,,,,,,yes,,,,,,,yes,yes,,,Agip,Agip,
+Stations-Services,25209822,http://www.openstreetmap.org/browse/node/25209822,34000,"Direction aéroport, Avenue Mendès-France",fuel,,,,,,,,,,,,,,yes,,,,,Montpellier,3,Relais Elf de la Lironde,Elf,
+Stations-Services,1505439791,http://www.openstreetmap.org/browse/node/1505439791,,,fuel,,,,,,,,,,,,,,,,,,,,,,Elf,
+Stations-Services,805077408,http://www.openstreetmap.org/browse/node/805077408,,,fuel,,,,,,,,,,,,,,,,,,,,,,,
+Stations-Services,-1901281772,http://www.openstreetmap.org/browse/node/2393685524,,,fuel,,,no,no,no,no,no,no,no,no,no,no,yes,no,no,no,no,no,,,,,
+Stations-Services,312799971,http://www.openstreetmap.org/browse/node/312799971,,,fuel,,,,,,,,,,,,,,,,,,,,,,,
+Stations-Services,281571691,http://www.openstreetmap.org/browse/node/281571691,,,fuel,,,,,,,,,,,,,,,,,,,,,Station Total,Total,

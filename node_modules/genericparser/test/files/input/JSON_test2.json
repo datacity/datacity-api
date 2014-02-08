@@ -1,0 +1,30 @@
+{
+   "result": [{ 
+        "type": "Feature", "properties": { 
+            "type": "Téléphones publics", 
+            "osm_id": 1252168854, 
+            "osm_url": "http://www.openstreetmap.org/browse/node/1252168854"
+        }, 
+        "geometry": { 
+            "type": "Point", 
+            "coordinates": [ 3.881755, 43.609586 ],
+            "hardcore" : {
+                "montest": "cool",
+                "superchaud": "test",
+                "encoreplus": {
+                    "Superhard": "harddd",
+                    "ouaou": "supercool"
+                },
+            "Cool": {
+                "test1": "marche",
+                "test2": "fonctionne"
+                }
+            },
+            "Top" : {
+                "prout1": "star",
+                "cats": "dogs"
+            },
+            "Le finish" : [ 4.7894, 6544 ]
+        } 
+    }]
+}

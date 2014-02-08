@@ -30,6 +30,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/test/upload', routes.testUpload);
 app.post('/file', files.post);
 app.get('/file/:id', files.get);
 
