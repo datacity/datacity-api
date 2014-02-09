@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "DataCity",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
   "dependencies": {
     "express": "~3.4.8",
     "ejs": "~0.8.5",
-    "formidable": "~1.0.14"
+    "formidable": "~1.0.14",
+    "elasticsearch": "~1.5.2"
   }
 }

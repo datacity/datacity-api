@@ -38,8 +38,10 @@ app.get('/file/:id', files.get);
 app.post('/file/upload', files.post);
 
 // Users
+//app.post('/user/:id/upload', users.create);
 //app.post('/user/:id/upload', users.upload);
 //app.get('/user/:id/files', users.files);
+//app.get('/user/:id', users.get);
 
 // Categories
 // app.get('/category', categories.getCategories);
