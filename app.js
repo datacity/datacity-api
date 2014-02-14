@@ -30,18 +30,23 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+
 app.get('/', routes.index);
-app.get('/test/upload', routes.testUpload);
+
+// TEST ROUTES
+app.get('/testUpload', routes.testUpload);
 
 // Files (origin file only !! not parsed)
-app.get('/file/:id', files.get);
-app.post('/file/upload', files.post);
+//app.get('/file/:id', files.get);
+// app.post('/file', files.post);
 
 // Users
 //app.post('/user/:id/upload', users.create);
-//app.post('/user/:id/upload', users.upload);
+app.post('/user/:id/upload', files.post);
 //app.get('/user/:id/files', users.files);
 //app.get('/user/:id', users.get);
+app.get('/user', users.get);
+app.post('/user', users.create);
 
 // Categories
 // app.get('/category', categories.getCategories);
