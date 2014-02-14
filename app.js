@@ -36,18 +36,18 @@ app.get('/', routes.index);
 // TEST ROUTES
 app.get('/testUpload', routes.testUpload);
 
-// Files (origin file only !! not parsed)
-//app.get('/file/:id', files.get);
-// app.post('/file', files.post);
+// FILES (origin file only !! not parsed)
+app.get('/file/:id', files.get);
 
-// Users
+// USERS
 //app.post('/user/:id/upload', users.create);
-app.post('/user/:id/upload', files.post);
-//app.get('/user/:id/files', users.files);
-//app.get('/user/:id', users.get);
+app.post('/user/:id/upload', files.post); // the id is the public key
 app.get('/user', users.get);
 app.post('/user', users.create);
 
+// TOTO : Routes to make
+//app.get('/user/:id/files', users.files);
+//app.get('/user/:id', users.get);
 // Categories
 // app.get('/category', categories.getCategories);
 

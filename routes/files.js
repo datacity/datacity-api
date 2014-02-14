@@ -31,7 +31,7 @@ exports.post = function(req, res) {
 	    index: 'files',
 	    type: 'file',
 	    body: {
-		name: file.name,
+		filename: file.name,
 		path: file.path.replace(/^.*(\\|\/|\:)/, ''),
 		creation: new Date(),
 		quota: body.quota,
@@ -66,8 +66,13 @@ exports.get = function(req, res) {
 
     fs.exists(filePath, function(exists) {
 	if (exists) {
-	    res.download(filePath);
-	    // TODO : res.download(filePath, "toto.xml"); // the 2nd param can rename the downloaded file. To be used when the file name will be saved.
+	    client.search({
+		index: 'files',
+		type: 'file',
+		q: 'path:"' + id + '"' 
+	    }, function (error, response) {
+		res.download(filePath, response.hits.filename);
+	    });
 	} else {
 	    res.statusCode = 404;
 	    return res.send('Error 404: No file found');
