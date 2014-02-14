@@ -4,6 +4,8 @@ var elasticsearch = require('elasticsearch');
 var genericParser = require('genericparser');
 var fs = require('fs');
 
+require('utils.js');
+
 var uploadDir = "./uploads/";
 
 // Connect to localhost:9200 and use the default settings
