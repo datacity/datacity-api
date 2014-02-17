@@ -38,14 +38,18 @@ app.get('/testUpload', routes.testUpload);
 
 // FILES (origin file only !! not parsed)
 app.get('/file/:id', files.get);
+app.get('/file', files.list); // list all the files
+// TODO : Delete files
 
 // USERS
 //app.post('/user/:id/upload', users.create);
 app.post('/user/:id/upload', files.post); // the id is the public key
+app.get('/user/:id/files', files.user); // the id is the public key
 app.get('/user', users.get);
 app.post('/user', users.create);
+app.delete('/user/:id', users.delete); // the id is the elasticsearch id
 
-// TOTO : Routes to make
+// TODO : Routes to make
 //app.get('/user/:id/files', users.files);
 //app.get('/user/:id', users.get);
 // Categories

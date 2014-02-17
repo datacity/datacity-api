@@ -21,7 +21,7 @@
 	
 		if (formdata) {
 			$.ajax({
-				url: "/file",
+				url: "/user/cecozeucozebuo/upload",
 				type: "POST",
 				data: formdata,
 				processData: false,

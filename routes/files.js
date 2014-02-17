@@ -2,9 +2,8 @@ var formidable = require('formidable');
 var elasticsearch = require('elasticsearch');
 // see http://www.elasticsearch.org/blog/client-for-node-js-and-the-browser/
 var genericParser = require('genericparser');
+var utils = require('./utils');
 var fs = require('fs');
-
-require('utils.js');
 
 var uploadDir = "./uploads/";
 
@@ -16,66 +15,137 @@ var client = new elasticsearch.Client();
  */
 // POST upload multiple user file
 exports.post = function(req, res) {
-    var id = req.params.id;
-    if (!id) {
-	res.json(200, { status: "error", message: "invalid ID in the request" });	
-	return;
-    }
+  var id = req.params.id;
+  if (!id) {
+   res.json(200, { status: "error", message: "invalid ID in the request" });	
+   return;
+ }
     // TODO : check here id the user exists and get the elasticsearch user id
+
+    // utils.checkUserExists(id);
+
     var form = new formidable.IncomingForm();
     var files = [];
 
     form.uploadDir = uploadDir;
     form.on('file', function(field, file) {
-	client.create({
-	    index: 'files',
-	    type: 'file',
-	    body: {
-		filename: file.name,
-		path: file.path.replace(/^.*(\\|\/|\:)/, ''),
-		creation: new Date(),
-		quota: body.quota,
-		user: "putUserId" // TODO : put real user ID
-	    }
-	}, function (error, response) {
-	    res.json(200, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + response });
-	});
+      var file = {
+        filename: file.name,
+        path: file.path.replace(/^.*(\\|\/|\:)/, ''),
+        uploadedDate: new Date(),
+        lastModifiedDate: file.lastModifiedDate,
+        type: file.type,
+        size: file.size,
+        publicKey: id // TODO : put real user ID -> elasticsearch
+      };
+     client.create({
+       index: 'files',
+       type: 'file',
+       body: file
+}).then(function(resp) {
+	    // res.json(200, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + response });
+   }, function(err) {
 
-	files.push({
-            name: file.name,
-            path: file.path.replace(/^.*(\\|\/|\:)/, '')
-	});
-    });
+   });
+
+     files.push(file);
+   });
     form.on('end', function() {
-	res.json(200, {
-            status: "success", 
-            data: {
-		"files": files
-            }
-	});
+     res.json(200, {
+      status: "success", 
+      data: {
+        "files": files
+      }
     });
+   });
     form.on('error', function(err) {
-	res.json(200, { status: "error", message: "Error to upload files" });
-    });
+     res.json(200, { status: "error", message: "Error to upload files" });
+   });
     form.parse(req);
-};
+  };
 
-exports.get = function(req, res) {
+  exports.get = function(req, res) {
     var id = req.params.id;
     var filePath = uploadDir + id;
 
     fs.exists(filePath, function(exists) {
-	if (exists) {
-	    client.search({
-		index: 'files',
-		type: 'file',
-		q: 'path:"' + id + '"' 
-	    }, function (error, response) {
-		res.download(filePath, response.hits.filename);
-	    });
-	} else {
-	    res.statusCode = 404;
-	    return res.send('Error 404: No file found');
-	}
+     if (exists) {
+       client.search({
+        index: 'files',
+        type: 'file',
+        q: 'path:"' + id + '"' 
+      }, function (error, response) {
+        var filename = response.hits.hits[0]["_source"]["filename"];
+        res.download(filePath, filename);
+      });
+     } else {
+       res.statusCode = 404;
+       return res.send('Error 404: No file found');
+     }
+   });
+  };
+
+
+  exports.list = function(req, res) {
+    client.search({
+     index: 'files',
+     type: 'file',
+     q: 'path:*'
+   }).then(function (resp) {
+    var list = [];
+    for (var file in resp.hits.hits) {
+
+      list.push({
+        filename: resp.hits.hits[file]["_source"]["filename"],
+        path: resp.hits.hits[file]["_source"]["path"],
+        uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
+        lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
+        type: resp.hits.hits[file]["_source"]["type"],
+        size: resp.hits.hits[file]["_source"]["size"],
+        publicKey: resp.hits.hits[file]["_source"]["publicKey"]
+      });
+    }
+    res.json(200, {
+      status: "success", 
+      data: list
     });
+  }, function(err) {
+    res.json(200, {
+      status: "error", 
+      data: err.message
+    });
+  });
+ };
+
+
+// WARNING : Doesn't work
+exports.user = function(req, res) {
+  var id = req.params.id;
+  client.search({
+   index: 'files',
+   type: 'file',
+   q: 'user:' + "'" + id + "'"
+ }).then(function (resp) {
+  var list = [];
+  for (var file in resp.hits.hits) {
+    list.push({
+      filename: resp.hits.hits[file]["_source"]["filename"],
+      path: resp.hits.hits[file]["_source"]["path"],
+      uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
+      lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
+      type: resp.hits.hits[file]["_source"]["type"],
+      size: resp.hits.hits[file]["_source"]["size"],
+      publicKey: resp.hits.hits[file]["_source"]["publicKey"]
+    });
+  }
+  res.json(200, {
+    status: "success", 
+    data: list
+  });
+}, function(err) {
+  res.json(200, {
+    status: "error", 
+    data: err.message
+  });
+});
 };
