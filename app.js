@@ -7,6 +7,7 @@ var express = require('express');
 var routes = require('./routes');
 var files = require('./routes/files');
 var users = require('./routes/users');
+var sources = require('./routes/sources');
 var http = require('http');
 var path = require('path');
 
@@ -30,6 +31,13 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+app.all('*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+  res.header("Access-Control-Allow-Credentials', true");
+  res.header("Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS");
+  next();
+});
 
 app.get('/', routes.index);
 
@@ -43,11 +51,18 @@ app.get('/file', files.list); // list all the files
 
 // USERS
 //app.post('/user/:id/upload', users.create);
+app.get('/user/:id/parse/:path', files.parse); // Parse the file with generic parse module
 app.post('/user/:id/upload', files.post); // the id is the public key
 app.get('/user/:id/files', files.user); // the id is the public key
 app.get('/user', users.get);
 app.post('/user', users.create);
 app.delete('/user/:id', users.delete); // the id is the elasticsearch id
+
+// SOURCES
+app.post('/source/upload', sources.post);
+app.get('/source/model', sources.getModel);
+app.get('/source/download', sources.get);
+
 
 // TODO : Routes to make
 //app.get('/user/:id/files', users.files);

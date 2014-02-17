@@ -63,6 +63,26 @@ exports.post = function(req, res) {
    });
     form.parse(req);
   };
+  
+  exports.parse = function(req, res) {
+      var path = req.params.path;
+      var id = req.params.id;
+      var dirName = uploadDir + path;
+
+      fs.exists(dirName, function(exists) {
+          if (exists) {
+              var typeTab = path.split('.');
+              var type = typeTab[typeTab.length - 1].toLowerCase();
+              genericParser(type).on("error", function(error) {
+                  res.json(505, error.message);
+              });
+              genericParser(type).parse(dirName, false, function(result, index) {
+                  console.log(result);
+                  res.json(200, result);
+              });
+          }
+      });
+  }
 
   exports.get = function(req, res) {
     var id = req.params.id;
