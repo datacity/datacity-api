@@ -29,7 +29,10 @@ var storeSourceOnElasticSearch = function(res, type) {
         client.bulk({
             body: bodyArray
             }, function (err, resp, status) {
-                res.json(status, resp);
+                res.json(status, {
+                    status: "success", 
+                    data: resp
+                });
             });
     });
 }
@@ -70,7 +73,10 @@ exports.get = function(req, res) {
         type: req.query.category,
         q: idClient
     }, function(error, response, status) {
-            res.json(status, response);
+            res.json(status, {
+                status: "success", 
+                data: response
+        });
     });
 };
 
@@ -88,6 +94,9 @@ exports.getModel = function(req, res) {
             return;
         }
         var categoryMapping = Object.keys(response.sources[req.query.category].properties);
-        res.json(status, categoryMapping);
+        res.json(200, {
+            status: "success", 
+            data: categoryMapping
+        });
     });
 }

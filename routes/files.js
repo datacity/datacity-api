@@ -26,28 +26,26 @@ exports.post = function(req, res) {
 
     var form = new formidable.IncomingForm();
     var files = [];
-
     form.uploadDir = uploadDir;
-    form.on('file', function(field, file) {
+    form.on('file', function(field, fileForm) {
       var file = {
-        filename: file.name,
-        path: file.path.replace(/^.*(\\|\/|\:)/, ''),
+        filename: fileForm.name,
+        path: fileForm.path.replace(/^.*(\\|\/|\:)/, ''),
         uploadedDate: new Date(),
-        lastModifiedDate: file.lastModifiedDate,
-        type: file.type,
-        size: file.size,
+        lastModifiedDate: fileForm.lastModifiedDate,
+        type: fileForm.type,
+        size: fileForm.size,
         publicKey: id // TODO : put real user ID -> elasticsearch
       };
      client.create({
        index: 'files',
        type: 'file',
        body: file
-}).then(function(resp) {
-	    // res.json(200, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + response });
+    }).then(function(resp) {
+        res.json(505, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + resp});
    }, function(err) {
 
    });
-
      files.push(file);
    });
     form.on('end', function() {
@@ -114,7 +112,6 @@ exports.post = function(req, res) {
    }).then(function (resp) {
     var list = [];
     for (var file in resp.hits.hits) {
-
       list.push({
         filename: resp.hits.hits[file]["_source"]["filename"],
         path: resp.hits.hits[file]["_source"]["path"],
@@ -144,7 +141,7 @@ exports.user = function(req, res) {
   client.search({
    index: 'files',
    type: 'file',
-   q: 'user:' + "'" + id + "'"
+   q: 'publicKey:' + id
  }).then(function (resp) {
   var list = [];
   for (var file in resp.hits.hits) {
