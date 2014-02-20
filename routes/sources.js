@@ -49,7 +49,6 @@ exports.post = function(req, res) {
     // TESTER LA SECURITE AU NIVEAU DE LA CLE PUBLIQUE
     // TESTER LE CONTENU ET LE TYPE DU FICHIER EN ENTREE
     // ENLEVER TOUT SCRIPT QUI POURRAIT ETRE PRESENT DANS LE JSON
-    console.log("on rentre ici ");
     if (!req.body.jsonData || !req.body.databiding || !req.body.publickey) {
         req.json("505", {
             status: "error"
@@ -84,7 +83,6 @@ exports.getModel = function(req, res) {
     client.indices.getMapping({
         index: 'sources'
     }, function(error, response, status) {
-        console.log(response.sources);
         if (!req.query || !req.query.category || !response 
             || !response.sources || !response.sources[req.query.category] 
             || !response.sources[req.query.category].properties) {

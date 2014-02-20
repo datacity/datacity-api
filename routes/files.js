@@ -62,7 +62,15 @@ exports.post = function(req, res) {
     form.parse(req);
   };
   
+  // GET The File from the path 
   exports.parse = function(req, res) {
+      if (!req.params || !req.params.path || !req.params.id) {
+          res.json(505, {
+              status: "error", 
+              message: "Send path and public key please"
+          });
+          return;
+      }
       var path = req.params.path;
       var id = req.params.id;
       var dirName = uploadDir + path;
@@ -72,11 +80,17 @@ exports.post = function(req, res) {
               var typeTab = path.split('.');
               var type = typeTab[typeTab.length - 1].toLowerCase();
               genericParser(type).on("error", function(error) {
-                  res.json(505, error.message);
+                  res.json(505, {
+                      status: "error", 
+                      message: error.message
+                  });
               });
               genericParser(type).parse(dirName, false, function(result, index) {
-                  console.log(result);
-                  res.json(200, result);
+                  if (result)
+                     res.json(200, {
+                         status: "success",
+                         data: result
+                     });
               });
           }
       });
@@ -134,8 +148,6 @@ exports.post = function(req, res) {
   });
  };
 
-
-// WARNING : Doesn't work
 exports.user = function(req, res) {
   var id = req.params.id;
   client.search({
@@ -160,7 +172,7 @@ exports.user = function(req, res) {
     data: list
   });
 }, function(err) {
-  res.json(200, {
+  res.json(505, {
     status: "error", 
     data: err.message
   });
