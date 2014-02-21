@@ -42,7 +42,7 @@ exports.post = function(req, res) {
        type: 'file',
        body: file
     }).then(function(resp) {
-        res.json(505, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + resp});
+        res.json(500, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + resp});
    }, function(err) {
 
    });
@@ -65,7 +65,7 @@ exports.post = function(req, res) {
   // GET The File from the path 
   exports.parse = function(req, res) {
       if (!req.params || !req.params.path || !req.params.id) {
-          res.json(505, {
+          res.json(500, {
               status: "error", 
               message: "Send path and public key please"
           });
@@ -80,7 +80,7 @@ exports.post = function(req, res) {
               var typeTab = path.split('.');
               var type = typeTab[typeTab.length - 1].toLowerCase();
               genericParser(type).on("error", function(error) {
-                  res.json(505, {
+                  res.json(500, {
                       status: "error", 
                       message: error.message
                   });
@@ -172,7 +172,7 @@ exports.user = function(req, res) {
     data: list
   });
 }, function(err) {
-  res.json(505, {
+  res.json(500, {
     status: "error", 
     data: err.message
   });

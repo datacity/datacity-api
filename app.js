@@ -21,7 +21,9 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.limit(100000000));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -59,7 +61,7 @@ app.post('/user', users.create);
 app.delete('/user/:id', users.delete); // the id is the elasticsearch id
 
 // SOURCES
-app.post('/source/upload', sources.post);
+app.post('/user/:id/source/:category/upload', sources.post);
 app.get('/source/model', sources.getModel);
 app.get('/source/download', sources.get);
 
