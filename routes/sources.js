@@ -41,10 +41,9 @@ var generateProperJSON = function(file, databiding, id) {
      }
 }
 
-var storeSourceOnElasticSearch = function(res, type) {
+var storeSourceOnElasticSearch = function(req, res, type) {
     var bodyArray = [];
     eventEmitter.on('line', function(line) {
-        //console.log(line);
         bodyArray.push({index:  { _index: 'sources', _type: type} }, line);
     });
     eventEmitter.on('end', function() {
@@ -53,7 +52,7 @@ var storeSourceOnElasticSearch = function(res, type) {
             }, function (err, resp, status) {
                 res.json(status, {
                     status: "success", 
-                    data: "Vous avez uploadé avec succès votre source!"
+                    message: "from: " + req.url + ": You uploaded your source with success!"
                 });
             });
     });
@@ -72,19 +71,21 @@ exports.post = function(req, res) {
     // TESTER LE CONTENU ET LE TYPE DU FICHIER EN ENTREE
     // ENLEVER TOUT SCRIPT QUI POURRAIT ETRE PRESENT DANS LE JSON
     if (!req.body.jsonData || !req.body.databiding) {
-        req.json(500, {
-            status: "error"
+        req.json(200, {
+            status: "error",
+            message: "from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding"
         });
         return;
     }
-    storeSourceOnElasticSearch(res, req.params.category);
+    storeSourceOnElasticSearch(req, res, req.params.category);
     generateProperJSON(req.body.jsonData, req.body.databiding, req.params.id);
 };
 
 exports.get = function(req, res) {
     if (!req.query.category || !req.query.publickey) {
-         res.json(500, {
-            status: "error"
+         res.json(200, {
+            status: "error",
+            message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
         });
         return;
     }
@@ -96,7 +97,8 @@ exports.get = function(req, res) {
     }, function(error, response, status) {
             res.json(status, {
                 status: "success", 
-                data: response
+                data: response,
+                message: "from: " + req.url + ": Source downloaded!"
         });
     });
 };
@@ -105,18 +107,21 @@ exports.getModel = function(req, res) {
     client.indices.getMapping({
         index: 'sources'
     }, function(error, response, status) {
-        if (!req.query || !req.query.category || !response 
-            || !response.sources || !response.sources[req.query.category] 
-            || !response.sources[req.query.category].properties) {
-                res.json(505, {
-                    status: "error"
+        var category = req.params.category;
+        if (!req.query || !category || !response 
+            || !response.sources || !response.sources[category] 
+            || !response.sources[category].properties) {
+                res.json(200, {
+                    status: "error",
+                    message: "from: " + req.url + ": No mapping available. Maybe it's because there is no source uploaded in elasticsearch ?"
                 });
             return;
         }
-        var categoryMapping = Object.keys(response.sources[req.query.category].properties);
+        var categoryMapping = Object.keys(response.sources[category].properties);
         res.json(200, {
             status: "success", 
-            data: categoryMapping
+            data: categoryMapping,
+             message: "from: " + req.url + ": Mapping sended"
         });
     });
 }

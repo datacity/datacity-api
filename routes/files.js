@@ -1,6 +1,6 @@
 var formidable = require('formidable');
 var elasticsearch = require('elasticsearch');
-// see http://www.elasticsearch.org/blog/client-for-node-js-and-the-browser/
+
 var genericParser = require('genericparser');
 var utils = require('./utils');
 var fs = require('fs');
@@ -17,7 +17,7 @@ var client = new elasticsearch.Client();
 exports.post = function(req, res) {
   var id = req.params.id;
   if (!id) {
-   res.json(200, { status: "error", message: "invalid ID in the request" });	
+   res.json(200, { status: "error", message: "from: " + req.url + " : invalid publicKey in the request" });	
    return;
  }
     // TODO : check here id the user exists and get the elasticsearch user id
@@ -29,7 +29,7 @@ exports.post = function(req, res) {
     form.uploadDir = uploadDir;
     form.on('file', function(field, fileForm) {
       var file = {
-        filename: fileForm.name,
+        name: fileForm.name,
         path: fileForm.path.replace(/^.*(\\|\/|\:)/, ''),
         uploadedDate: new Date(),
         lastModifiedDate: fileForm.lastModifiedDate,
@@ -42,7 +42,7 @@ exports.post = function(req, res) {
        type: 'file',
        body: file
     }).then(function(resp) {
-        res.json(500, { status: "error", message: "Failed to save the file \"" + file.name + "\" . " + resp});
+        res.json(200, { status: "error", message: "from: " + req.url + " : Failed to save the file \"" + file.name + "\" . " + resp});
    }, function(err) {
 
    });
@@ -53,11 +53,15 @@ exports.post = function(req, res) {
       status: "success", 
       data: {
         "files": files
-      }
+      },
+      message: "from: " + req.url + ": file upload successfully!"
     });
    });
     form.on('error', function(err) {
-     res.json(200, { status: "error", message: "Error to upload files" });
+     res.json(200, { 
+         status: "error", 
+         message: "from: " + req.url + " : An error occured on the file upload : " + err
+        });
    });
     form.parse(req);
   };
@@ -65,9 +69,9 @@ exports.post = function(req, res) {
   // GET The File from the path 
   exports.parse = function(req, res) {
       if (!req.params || !req.params.path || !req.params.id) {
-          res.json(500, {
+          res.json(200, {
               status: "error", 
-              message: "Send path and public key please"
+              message: "from: " + req.url + " : Send path and public key please"
           });
           return;
       }
@@ -80,16 +84,17 @@ exports.post = function(req, res) {
               var typeTab = path.split('.');
               var type = typeTab[typeTab.length - 1].toLowerCase();
               genericParser(type).on("error", function(error) {
-                  res.json(500, {
+                  res.json(200, {
                       status: "error", 
-                      message: error.message
+                      message: "from: " + req.url + " : " + error.message
                   });
               });
               genericParser(type).parse(dirName, false, function(result, index) {
                   if (result)
                      res.json(200, {
                          status: "success",
-                         data: result
+                         data: result, 
+                         message: "from: " + req.url + ": file parsed successfully!"
                      });
               });
           }
@@ -107,7 +112,7 @@ exports.post = function(req, res) {
         type: 'file',
         q: 'path:"' + id + '"' 
       }, function (error, response) {
-        var filename = response.hits.hits[0]["_source"]["filename"];
+        var filename = response.hits.hits[0]["_source"]["name"];
         res.download(filePath, filename);
       });
      } else {
@@ -127,7 +132,7 @@ exports.post = function(req, res) {
     var list = [];
     for (var file in resp.hits.hits) {
       list.push({
-        filename: resp.hits.hits[file]["_source"]["filename"],
+        file: resp.hits.hits[file]["_source"]["name"],
         path: resp.hits.hits[file]["_source"]["path"],
         uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
         lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
@@ -138,12 +143,13 @@ exports.post = function(req, res) {
     }
     res.json(200, {
       status: "success", 
-      data: list
+      data: list,
+       message: "from: " + req.url
     });
   }, function(err) {
     res.json(200, {
       status: "error", 
-      data: err.message
+      message: err.message
     });
   });
  };
@@ -158,7 +164,7 @@ exports.user = function(req, res) {
   var list = [];
   for (var file in resp.hits.hits) {
     list.push({
-      filename: resp.hits.hits[file]["_source"]["filename"],
+      name: resp.hits.hits[file]["_source"]["name"],
       path: resp.hits.hits[file]["_source"]["path"],
       uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
       lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
@@ -169,12 +175,13 @@ exports.user = function(req, res) {
   }
   res.json(200, {
     status: "success", 
-    data: list
+    data: list,
+    message: "from: " + req.url
   });
 }, function(err) {
-  res.json(500, {
+  res.json(200, {
     status: "error", 
-    data: err.message
+    message: "from: " + req.url + ": " + err.message
   });
 });
 };

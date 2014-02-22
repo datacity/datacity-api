@@ -30,7 +30,7 @@ exports.create = function(req, res) {
    }
  }).then(function (resp) {
     res.json(200, {
-  status: "success", 
+  status: "success",
   data: "user created"
 });
    // res.json(200, { status: "error", message: "Failed to create the user. " + response });
@@ -40,8 +40,6 @@ exports.create = function(req, res) {
     data: err.message
   });
  });
-
- 
 };
 
 // GET the list of users
@@ -68,7 +66,7 @@ exports.get = function(req, res) {
 }, function(err) {
   res.json(200, {
     status: "error", 
-    data: err.message
+    data: "from: " + req.url + ": " + err.message
   });
 });
 };
