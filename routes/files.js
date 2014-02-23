@@ -132,7 +132,7 @@ exports.post = function(req, res) {
     var list = [];
     for (var file in resp.hits.hits) {
       list.push({
-        file: resp.hits.hits[file]["_source"]["name"],
+        name: resp.hits.hits[file]["_source"]["name"],
         path: resp.hits.hits[file]["_source"]["path"],
         uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
         lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
@@ -185,3 +185,49 @@ exports.user = function(req, res) {
   });
 });
 };
+
+  exports.delete = function(req, res) {
+      if (!req.params || !req.params.path || !req.params.id) {
+          res.json(200, {
+              status: "error", 
+              message: "from: " + req.url + " : Send path and public key please"
+          });
+          return;
+      }
+      var path = req.params.path;
+      var id = req.params.id;
+      var dirName = uploadDir + path;
+
+      fs.exists(dirName, function(exists) {
+          if (exists) {
+              client.deleteByQuery({
+                 index: 'files',
+                 type: 'file',
+                 q: 'path:"' + path + '"'
+               }).then(function (resp) {
+                
+                fs.unlink(dirName, function (err) {
+                  if (err) throw err;
+                // TODO : delete file on the file system
+
+                  res.json(200, {
+                    status: "success", 
+                    data: "the file has been deleted"
+                  });
+                });
+              }, function(err) {
+
+                res.json(200, {
+                  status: "error", 
+                  data: err.message
+                });
+              });
+          }
+          else {
+            res.json(200, {
+                  status: "error", 
+                  data: "file doesn't exist on the file system"
+                });
+          }
+      });
+  }

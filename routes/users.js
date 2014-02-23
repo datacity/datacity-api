@@ -74,10 +74,10 @@ exports.get = function(req, res) {
 // DELETE the user
 exports.delete = function(req, res) {
   var id = req.params.id;
-  client.delete({
+  client.deleteByQuery({
    index: 'users',
    type: 'user',
-   id: id
+   q: 'publicKey: "' + id + '"'
  }).then(function (resp) {
   
   res.json(200, {
