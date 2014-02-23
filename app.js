@@ -30,16 +30,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 /*
+// WARNING : seems cause issues in the header
 app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
-  res.header("Access-Control-Allow-Credentials', true");
-  res.header("Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS");
-  next();
+res.header("Access-Control-Allow-Origin", "*");
+res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+res.header("Access-Control-Allow-Credentials', true");
+res.header("Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS");
+next();
 });
 */
 
@@ -51,10 +52,8 @@ app.get('/testUpload', routes.testUpload);
 // FILES (origin file only !! not parsed)
 app.get('/file/:id', files.get);
 app.get('/file', files.list); // list all the files
-// TODO : Delete files
 
 // USERS
-//app.post('/user/:id/upload', users.create);
 app.get('/user/:id/parse/:path', files.parse); // Parse the file with generic parse module
 app.post('/user/:id/upload', files.post); // the id is the public key
 app.get('/user/:id/files', files.user); // the id is the public key
@@ -71,5 +70,6 @@ app.get('/source/download', sources.get);
 
 
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+    console.log('Express server listening on port ' + app.get('port'));
 });
+ 
