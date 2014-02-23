@@ -244,7 +244,7 @@ exports.delete = function(req, res) {
 
                     res.json(200, {
 			status: "success", 
-			data: "the file has been deleted"
+			data: "from: " + req.url + ": the file has been deleted"
                     });
                 });
             }, function(err) {
@@ -258,7 +258,7 @@ exports.delete = function(req, res) {
         else {
             res.json(200, {
                 status: "error", 
-                data: "file doesn't exist on the file system"
+                data: "from: " + req.url + ": file doesn't exist on the file system"
             });
         }
     });
