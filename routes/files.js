@@ -139,8 +139,8 @@ exports.list = function(req, res) {
 		uploadedDate: resp.hits.hits[file]["_source"]["uploadedDate"],
 		lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
 		type: resp.hits.hits[file]["_source"]["type"],
-    size: resp.hits.hits[file]["_source"]["size"],
-    encoding: resp.hits.hits[file]["_source"]["encoding"],
+		size: resp.hits.hits[file]["_source"]["size"],
+		encoding: resp.hits.hits[file]["_source"]["encoding"],
 		publicKey: resp.hits.hits[file]["_source"]["publicKey"]
 	    });
 	}
@@ -173,6 +173,7 @@ exports.user = function(req, res) {
 		lastModifiedDate: resp.hits.hits[file]["_source"]["lastModifiedDate"],
 		type: resp.hits.hits[file]["_source"]["type"],
 		size: resp.hits.hits[file]["_source"]["size"],
+		encoding: resp.hits.hits[file]["_source"]["encoding"],
 		publicKey: resp.hits.hits[file]["_source"]["publicKey"]
 	    });
 	}
@@ -213,8 +214,8 @@ exports.delete = function(req, res) {
                     if (err) throw err;
 
                     res.json(200, {
-                      status: "success", 
-                      data: "the file has been deleted"
+			status: "success", 
+			data: "the file has been deleted"
                     });
                 });
             }, function(err) {
