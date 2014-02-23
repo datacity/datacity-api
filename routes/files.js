@@ -83,7 +83,6 @@ exports.parse = function(req, res) {
 
     fs.exists(dirName, function(exists) {
         if (exists) {
-
             client.search({
             index: 'files',
             type: 'file',
@@ -96,7 +95,7 @@ exports.parse = function(req, res) {
                     });
                     return;
                 }
-                var name = resp.hits.hits[file]["_source"]["name"];
+                var name = resp.hits.hits[0]["_source"]["name"];
 
                 var typeTab = name.split('.');
                 var type = typeTab[typeTab.length - 1].toLowerCase();
