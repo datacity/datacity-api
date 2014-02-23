@@ -107,13 +107,14 @@ exports.parse = function(req, res) {
                     });
                     return;
                 }
-                parser.on("error", function(error) {
-                    res.json(200, {
-                        status: "error", 
-                        message: "from: " + req.url + " : " + error.message
-                    });
-                });
+                // parser.on("error", function(error) { // fait que boucler ??
+                //     res.json(200, {
+                //         status: "error", 
+                //         message: "from: " + req.url + " : " + error.message
+                //     });
+                // });
                 parser.parse(dirName, false, function(result, index) {
+                    console.log("dans le callback");
                     if (result)
                         res.json(200, {
                             status: "success",
