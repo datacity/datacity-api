@@ -83,21 +83,50 @@ exports.parse = function(req, res) {
 
     fs.exists(dirName, function(exists) {
         if (exists) {
-            var typeTab = path.split('.');
-            var type = typeTab[typeTab.length - 1].toLowerCase();
-            genericParser(type).on("error", function(error) {
+
+            client.search({
+            index: 'files',
+            type: 'file',
+            q: 'path: "' + path + '"'
+            }).then(function (resp) {
+                if (resp.hits.hits.length == 0) {
+                    res.json(200, {
+                        status: "error", 
+                        message: "unable to find the file in the database"
+                    });
+                    return;
+                }
+                var name = resp.hits.hits[file]["_source"]["name"];
+
+                var typeTab = name.split('.');
+                var type = typeTab[typeTab.length - 1].toLowerCase();
+                var parser = genericParser(type);
+                if (!parser) {
+                    res.json(200, {
+                        status: "error", 
+                        message: "the file [" + name + "] can't be parsed. Incompatible file type."
+                    });
+                    return;
+                }
+                parser.on("error", function(error) {
+                    res.json(200, {
+                        status: "error", 
+                        message: "from: " + req.url + " : " + error.message
+                    });
+                });
+                parser.parse(dirName, false, function(result, index) {
+                    if (result)
+                        res.json(200, {
+                            status: "success",
+                            data: result, 
+                            message: "from: " + req.url + ": file parsed successfully!"
+                        });
+                });
+            }, function(err) {
                 res.json(200, {
                     status: "error", 
-                    message: "from: " + req.url + " : " + error.message
+                    message: err.message
                 });
-            });
-            genericParser(type).parse(dirName, false, function(result, index) {
-                if (result)
-                    res.json(200, {
-                        status: "success",
-                        data: result, 
-                        message: "from: " + req.url + ": file parsed successfully!"
-                    });
             });
         }
     });
