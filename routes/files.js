@@ -99,10 +99,12 @@ exports.parse = function(req, res) {
 
                 var typeTab = name.split('.');
                 var type = typeTab[typeTab.length - 1].toLowerCase();
+                console.log(type);
                 var parser = genericParser(type);
+                console.log(parser);
                 if (!parser) {
                     res.json(200, {
-                        status: "error", 
+                        status: "error",
                         message: "the file [" + name + "] can't be parsed. Incompatible file type."
                     });
                     return;
