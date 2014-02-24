@@ -63,9 +63,13 @@ app.post('/user', users.create);
 app.delete('/user/:id', users.delete); // the id is the publicKey
 
 // SOURCES
-app.post('/user/:id/source/:category/upload', sources.post);
+app.post('/user/:id/source/:category/:name/upload', sources.post);
+
+
 app.get('/source/:category/model', sources.getModel);
-app.get('/source/download', sources.get);
+
+
+app.get('/source/:name/download', sources.get);
 
 
 

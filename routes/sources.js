@@ -20,7 +20,7 @@ function formatArray(myArray, property) {
     }
 }
 
-var generateProperJSON = function(file, databiding, id) {
+var generateProperJSON = function(file, databiding, id, sourceName) {
     formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     if (file instanceof Array)
@@ -33,6 +33,7 @@ var generateProperJSON = function(file, databiding, id) {
                     jsonObj = renameProperty(jsonObj, key, databiding[indexObject][key]);
              }
              jsonObj['publicKey'] = id;
+             jsonObj['sourceName'] = sourceName;
              
              //TODO: LIMITER LA BULK REQUEST A 1000
             eventEmitter.emit('line', jsonObj);
@@ -50,6 +51,7 @@ var storeSourceOnElasticSearch = function(req, res, type) {
         client.bulk({
             body: bodyArray
             }, function (err, resp, status) {
+                console.log("on va donc répondre !!!: " + status);
                 res.json(status, {
                     status: "success", 
                     message: "from: " + req.url + ": You uploaded your source with success!"
@@ -70,15 +72,15 @@ exports.post = function(req, res) {
     // TESTER LA SECURITE AU NIVEAU DE LA CLE PUBLIQUE
     // TESTER LE CONTENU ET LE TYPE DU FICHIER EN ENTREE
     // ENLEVER TOUT SCRIPT QUI POURRAIT ETRE PRESENT DANS LE JSON
-    if (!req.body.jsonData || !req.body.databiding) {
-        req.json(200, {
+    if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
+        res.json(200, {
             status: "error",
             message: "from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding"
         });
         return;
     }
     storeSourceOnElasticSearch(req, res, req.params.category);
-    generateProperJSON(req.body.jsonData, req.body.databiding, req.params.id);
+    generateProperJSON(req.body.jsonData, req.body.databiding, req.params.id, req.params.name);
 };
 
 exports.get = function(req, res) {
@@ -89,11 +91,11 @@ exports.get = function(req, res) {
         });
         return;
     }
-    var idClient = 'publicKey:' + req.query.publickey;
+    var sourceName = 'sourceName:' + req.query.name;
     client.search({
         index: 'sources',
         type: req.query.category,
-        q: idClient
+        q: sourceName
     }, function(error, response, status) {
             res.json(status, {
                 status: "success", 
