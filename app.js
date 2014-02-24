@@ -21,7 +21,7 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
-// app.use(express.limit(100000000)); // TODO : replace this deprecated function
+app.use(express.limit(100000000)); // TODO : replace this deprecated function
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb'}));
 app.use(express.methodOverride());
@@ -38,8 +38,8 @@ if ('development' == app.get('env')) {
 app.all('*', function(req, res, next) {
 res.header("Access-Control-Allow-Origin", "*");
 res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
-res.header("Access-Control-Allow-Credentials', true");
-res.header("Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS");
+res.header("Access-Control-Allow-Credentials", "true");
+res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
 next();
 });
 
