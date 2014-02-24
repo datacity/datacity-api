@@ -21,7 +21,7 @@ function formatArray(myArray, property) {
 }
 
 var generateProperJSON = function(file, databiding, id, sourceName) {
-    formatArray(databiding);
+    //formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     if (file instanceof Array)
      {
@@ -49,9 +49,9 @@ var storeSourceOnElasticSearch = function(req, res, type) {
     });
     eventEmitter.on('end', function() {
         client.bulk({
-            body: bodyArray
+            body: bodyArray,
+            refresh: true
             }, function (err, resp, status) {
-                console.log("on va donc répondre !!!: " + status);
                 res.json(status, {
                     status: "success", 
                     message: "from: " + req.url + ": You uploaded your source with success!"
@@ -84,22 +84,22 @@ exports.post = function(req, res) {
 };
 
 exports.get = function(req, res) {
-    if (!req.query.category || !req.query.publickey) {
+    if (!req.params.name) {
          res.json(200, {
             status: "error",
             message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
         });
         return;
     }
-    var sourceName = 'sourceName:' + req.query.name;
+    var sourceName = 'sourceName:' + req.params.name;
     client.search({
         index: 'sources',
-        type: req.query.category,
+        size: '1000',
         q: sourceName
     }, function(error, response, status) {
             res.json(status, {
                 status: "success", 
-                data: response,
+                data: response.hits.hits,
                 message: "from: " + req.url + ": Source downloaded!"
         });
     });
