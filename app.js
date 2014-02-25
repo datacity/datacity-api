@@ -67,9 +67,13 @@ app.post('/user', users.create);
 app.delete('/user/:publicKey', middleware.check, users.delete);
 
 // SOURCES
-app.post('/user/:id/source/:category/upload', sources.post);
+app.post('/user/:id/source/:category/:name/upload', sources.post);
+
+
 app.get('/source/:category/model', sources.getModel);
-app.get('/source/download', sources.get);
+
+
+app.get('/source/:name/download', sources.get);
 
 app.get('/*', function(req, res, next) {
 	next({type: "error", message:"Unknown route [" + req.url + "]."});

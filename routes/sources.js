@@ -20,8 +20,8 @@ function formatArray(myArray, property) {
     }
 }
 
-var generateProperJSON = function(file, databiding, id) {
-    formatArray(databiding);
+var generateProperJSON = function(file, databiding, id, sourceName) {
+    //formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     if (file instanceof Array)
      {
@@ -33,6 +33,7 @@ var generateProperJSON = function(file, databiding, id) {
                     jsonObj = renameProperty(jsonObj, key, databiding[indexObject][key]);
              }
              jsonObj['publicKey'] = id;
+             jsonObj['sourceName'] = sourceName;
              
              //TODO: LIMITER LA BULK REQUEST A 1000
             eventEmitter.emit('line', jsonObj);
@@ -48,7 +49,8 @@ var storeSourceOnElasticSearch = function(req, res, type) {
     });
     eventEmitter.on('end', function() {
         client.bulk({
-            body: bodyArray
+            body: bodyArray,
+            refresh: true
             }, function (err, resp, status) {
                 res.json(status, {
                     status: "success", 
@@ -70,34 +72,34 @@ exports.post = function(req, res) {
     // TESTER LA SECURITE AU NIVEAU DE LA CLE PUBLIQUE
     // TESTER LE CONTENU ET LE TYPE DU FICHIER EN ENTREE
     // ENLEVER TOUT SCRIPT QUI POURRAIT ETRE PRESENT DANS LE JSON
-    if (!req.body.jsonData || !req.body.databiding) {
-        req.json(200, {
+    if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
+        res.json(200, {
             status: "error",
             message: "from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding"
         });
         return;
     }
     storeSourceOnElasticSearch(req, res, req.params.category);
-    generateProperJSON(req.body.jsonData, req.body.databiding, req.params.id);
+    generateProperJSON(req.body.jsonData, req.body.databiding, req.params.id, req.params.name);
 };
 
 exports.get = function(req, res) {
-    if (!req.query.category || !req.query.publickey) {
+    if (!req.params.name) {
          res.json(200, {
             status: "error",
             message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
         });
         return;
     }
-    var idClient = 'publicKey:' + req.query.publickey;
+    var sourceName = 'sourceName:' + req.params.name;
     client.search({
         index: 'sources',
-        type: req.query.category,
-        q: idClient
+        size: '1000',
+        q: sourceName
     }, function(error, response, status) {
             res.json(status, {
                 status: "success", 
-                data: response,
+                data: response.hits.hits,
                 message: "from: " + req.url + ": Source downloaded!"
         });
     });
