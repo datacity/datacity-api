@@ -26,13 +26,13 @@ var generateProperJSON = function(file, databiding, id, sourceName) {
     if (file instanceof Array)
      {
          for (var i in file) {
-            var jsonObj = file[i];
-             for (var key in jsonObj) {
+            var currentObject = file[i];
+            var jsonObj = {};
+             for (var key in currentObject) {
                  var indexObject = arrayObjectIndexOf(databiding, key);
                  if (indexObject != -1)
-                    jsonObj = renameProperty(jsonObj, key, databiding[indexObject][key]);
+                    jsonObj[databiding[indexObject][key]] = currentObject[key];
              }
-             jsonObj['publicKey'] = id;
              jsonObj['sourceName'] = sourceName;
              
              //TODO: LIMITER LA BULK REQUEST A 1000
