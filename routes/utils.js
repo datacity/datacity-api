@@ -17,7 +17,6 @@ exports.datacityUtils = function() {
        checkUserExists : function(publicKey) {
 	    // Checks if the user exists
 	    // return true or false
-        console.log("publickey = " + publicKey)
 
         // getUser(publicKey, function (error, response) {
         //     console.log(response.hits);

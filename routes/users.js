@@ -12,7 +12,6 @@ var client = new elasticsearch.Client();
 // TODO : Secure user creation to don't access form outside
 exports.create = function(req, res) {
   var body = req.body;
-  console.log(req.body);
 
   if (!body.publicKey || !body.privateKey || !body.quota || !body.username) {
    res.json(200, { status: "error", message: "Invalid request" });
