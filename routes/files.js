@@ -16,14 +16,7 @@ var client = new elasticsearch.Client();
  */
 // POST upload multiple user file
 exports.post = function(req, res) {
-    var id = req.params.id;
-    if (!id) {
-	res.json(200, { status: "error", message: "from: " + req.url + " : invalid publicKey in the request" });	
-	return;
-    }
-    // TODO : check here id the user exists and get the elasticsearch user id
-
-    // utils.checkUserExists(id);
+    var id = req.params.publicKey;
 
     var form = new formidable.IncomingForm();
     var files = [];
@@ -70,86 +63,68 @@ exports.post = function(req, res) {
 
 // GET The File from the path 
 exports.parse = function(req, res) {
-    if (!req.params || !req.params.path || !req.params.id) {
-        res.json(200, {
-            status: "error", 
-            message: "from: " + req.url + " : Send path and public key please"
-        });
-        return;
-    }
     var path = req.params.path;
-    var id = req.params.id;
+    var id = req.params.publicKey;
     var dirName = uploadDir + path;
 
-    fs.exists(dirName, function(exists) {
-        if (exists) {
-            client.search({
-            index: 'files',
-            type: 'file',
-            q: 'path: "' + path + '"'
-            }).then(function (resp) {
-                if (resp.hits.hits.length == 0) {
-                    res.json(200, {
-                        status: "error", 
-                        message: "unable to find the file in the database"
-                    });
-                    return;
-                }
-                var name = resp.hits.hits[0]["_source"]["name"];
-
-                var typeTab = name.split('.');
-                var type = typeTab[typeTab.length - 1].toLowerCase();
-                var parser = genericParser(type);
-                if (!parser) {
-                    res.json(200, {
-                        status: "error", 
-                        message: "the file [" + name + "] can't be parsed. Incompatible file type."
-                    });
-                    return;
-                }
-                // parser.on("error", function(error) { // fait que boucler ??
-                //     res.json(200, {
-                //         status: "error", 
-                //         message: "from: " + req.url + " : " + error.message
-                //     });
-                // });
-                parser.parse(dirName, false, function(result, index) {
-                    console.log("dans le callback");
-                    if (result)
-                        res.json(200, {
-                            status: "success",
-                            data: result, 
-                            message: "from: " + req.url + ": file parsed successfully!"
-                        });
-                });
-            }, function(err) {
-                res.json(200, {
-                    status: "error", 
-                    message: err.message
-                });
+    client.search({
+    index: 'files',
+    type: 'file',
+    q: 'path: "' + path + '"'
+    }).then(function (resp) {
+        if (resp.hits.hits.length == 0) {
+            res.json(200, {
+                status: "error", 
+                message: "unable to find the file in the database"
             });
+            return;
         }
+        var name = resp.hits.hits[0]["_source"]["name"];
+
+        var typeTab = name.split('.');
+        var type = typeTab[typeTab.length - 1].toLowerCase();
+        var parser = genericParser(type);
+        if (!parser) {
+            res.json(200, {
+                status: "error", 
+                message: "the file [" + name + "] can't be parsed. Incompatible file type."
+            });
+            return;
+        }
+        // parser.on("error", function(error) { // fait que boucler ??
+        //     res.json(200, {
+        //         status: "error", 
+        //         message: "from: " + req.url + " : " + error.message
+        //     });
+        // });
+        parser.parse(dirName, false, function(result, index) {
+            console.log("dans le callback");
+            if (result)
+                res.json(200, {
+                    status: "success",
+                    data: result, 
+                    message: "from: " + req.url + ": file parsed successfully!"
+                });
+        });
+    }, function(err) {
+        res.json(200, {
+            status: "error", 
+            message: err.message
+        });
     });
 }
 
 exports.get = function(req, res) {
-    var id = req.params.id;
+    var path = req.params.path;
     var filePath = uploadDir + id;
 
-    fs.exists(filePath, function(exists) {
-	if (exists) {
-	    client.search({
-		index: 'files',
-		type: 'file',
-		q: 'path:"' + id + '"' 
-	    }, function (error, response) {
-		var filename = response.hits.hits[0]["_source"]["name"];
-		res.download(filePath, filename);
-	    });
-	} else {
-	    res.statusCode = 404;
-	    return res.send('Error 404: No file found');
-	}
+    client.search({
+    	index: 'files',
+    	type: 'file',
+    	q: 'path:"' + path + '"' 
+    }, function (error, response) {
+    	var filename = response.hits.hits[0]["_source"]["name"];
+    	res.download(filePath, filename);
     });
 };
 
@@ -186,8 +161,8 @@ exports.list = function(req, res) {
     });
 };
 
-exports.user = function(req, res) {
-    var id = req.params.id;
+exports.user = function(req, res, next) {
+    var id = req.params.publicKey;
     client.search({
 	index: 'files',
 	type: 'file',
@@ -220,15 +195,8 @@ exports.user = function(req, res) {
 };
 
 exports.delete = function(req, res) {
-    if (!req.params || !req.params.path || !req.params.id) {
-        res.json(200, {
-            status: "error", 
-            message: "from: " + req.url + " : Send path and public key please"
-        });
-        return;
-    }
     var path = req.params.path;
-    var id = req.params.id;
+    var id = req.params.publicKey;
     var dirName = uploadDir + path;
 
     fs.exists(dirName, function(exists) {

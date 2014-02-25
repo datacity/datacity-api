@@ -8,6 +8,7 @@ var routes = require('./routes');
 var files = require('./routes/files');
 var users = require('./routes/users');
 var sources = require('./routes/sources');
+var middleware = require('./middleware/middleware');
 var http = require('http');
 var path = require('path');
 
@@ -27,6 +28,8 @@ app.use(express.urlencoded({limit: '50mb'}));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(middleware.errorHandler);
+app.use(express.errorHandler({dumpExceptions:true, showStack:true})); // TODO : check the right way for the event handler
 
 // development only
 if ('development' == app.get('env')) {
@@ -35,6 +38,7 @@ if ('development' == app.get('env')) {
 
 
 // WARNING : seems cause issues in the header
+/*
 app.all('*', function(req, res, next) {
 res.header("Access-Control-Allow-Origin", "*");
 res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
@@ -42,32 +46,34 @@ res.header("Access-Control-Allow-Credentials", "true");
 res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
 next();
 });
-
+*/
 
 app.get('/', routes.index);
 
 // TEST ROUTES
 app.get('/testUpload', routes.testUpload);
 
-// FILES (origin file only !! not parsed)
-app.get('/file/:id', files.get);
+// FILES
+app.get('/file/:path', middleware.check, files.get);
 app.get('/file', files.list); // list all the files
 
 // USERS
-app.get('/user/:id/parse/:path', files.parse); // Parse the file with generic parse module
-app.post('/user/:id/upload', files.post); // the id is the public key
-app.get('/user/:id/files', files.user); // the id is the public key
-app.delete('/user/:id/file/:path', files.delete); // the id is the public key
+app.get('/user/:publicKey/parse/:path', middleware.check, files.parse);
+app.post('/user/:publicKey/upload', middleware.check, files.post);
+app.get('/user/:publicKey/files', middleware.check, files.user);
+app.delete('/user/:publicKey/file/:path', middleware.check, files.delete);
 app.get('/user', users.get);
 app.post('/user', users.create);
-app.delete('/user/:id', users.delete); // the id is the publicKey
+app.delete('/user/:publicKey', middleware.check, users.delete);
 
 // SOURCES
 app.post('/user/:id/source/:category/upload', sources.post);
 app.get('/source/:category/model', sources.getModel);
 app.get('/source/download', sources.get);
 
-
+app.get('/*', function(req, res, next) {
+	next({type: "error", message:"Unknown route [" + req.url + "]."});
+});
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
