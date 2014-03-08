@@ -110,9 +110,11 @@ exports.getModel = function(req, res) {
         index: 'sources'
     }, function(error, response, status) {
         var category = req.params.category;
-        if (!req.query || !category || !response 
-            || !response.sources || !response.sources[category] 
-            || !response.sources[category].properties) {
+        console.log(response.sources[category]);
+        
+        if (!category || !response || !response.sources
+            || !response.sources.mappings || !response.sources.mappings[category] 
+            || !response.sources.mappings[category].properties) {
                 res.json(200, {
                     status: "error",
                     message: "from: " + req.url + ": No mapping available. Maybe it's because there is no source uploaded in elasticsearch ?"
