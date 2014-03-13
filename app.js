@@ -1,7 +1,5 @@
 
-/**
- * Module dependencies.
- */
+// Module dependencies
 
 var express = require('express');
 var routes = require('./routes');
@@ -46,9 +44,9 @@ res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
 next();
 });
 
+/*************************************************************************/
 
 app.get('/', routes.index);
-
 // TEST ROUTES
 app.get('/testUpload', routes.testUpload);
 
@@ -67,16 +65,15 @@ app.delete('/user/:publicKey', middleware.check, users.delete);
 
 // SOURCES
 app.post('/user/:id/source/:category/:name/upload', sources.post);
-
-
 app.get('/source/:category/model', sources.getModel);
-
-
 app.get('/source/:name/download', sources.get);
 
+// ALL
 app.get('/*', function(req, res, next) {
 	next({type: "error", message:"Unknown route [" + req.url + "]."});
 });
+
+/*************************************************************************/
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
