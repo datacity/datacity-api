@@ -26,13 +26,13 @@ var generateProperJSON = function(file, databiding, id, sourceName) {
     if (file instanceof Array)
      {
          for (var i in file) {
-            var jsonObj = file[i];
-             for (var key in jsonObj) {
+            var currentObject = file[i];
+            var jsonObj = {};
+             for (var key in currentObject) {
                  var indexObject = arrayObjectIndexOf(databiding, key);
                  if (indexObject != -1)
-                    jsonObj = renameProperty(jsonObj, key, databiding[indexObject][key]);
+                    jsonObj[databiding[indexObject][key]] = currentObject[key];
              }
-             jsonObj['publicKey'] = id;
              jsonObj['sourceName'] = sourceName;
              
              //TODO: LIMITER LA BULK REQUEST A 1000
@@ -110,9 +110,11 @@ exports.getModel = function(req, res) {
         index: 'sources'
     }, function(error, response, status) {
         var category = req.params.category;
-        if (!req.query || !category || !response 
-            || !response.sources || !response.sources[category] 
-            || !response.sources[category].properties) {
+        console.log(response.sources[category]);
+        
+        if (!category || !response || !response.sources
+            || !response.sources.mappings || !response.sources.mappings[category] 
+            || !response.sources.mappings[category].properties) {
                 res.json(200, {
                     status: "error",
                     message: "from: " + req.url + ": No mapping available. Maybe it's because there is no source uploaded in elasticsearch ?"

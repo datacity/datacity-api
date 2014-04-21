@@ -1,7 +1,6 @@
 var formidable = require('formidable');
 var elasticsearch = require('elasticsearch');
 var chardet = require('chardet');
-
 var genericParser = require('genericparser');
 var utils = require('./utils');
 var fs = require('fs');
@@ -80,7 +79,6 @@ exports.parse = function(req, res) {
             return;
         }
         var name = resp.hits.hits[0]["_source"]["name"];
-
         var typeTab = name.split('.');
         var type = typeTab[typeTab.length - 1].toLowerCase();
         var parser = genericParser(type);
@@ -216,7 +214,6 @@ exports.delete = function(req, res) {
                     });
                 });
             }, function(err) {
-
                 res.json(200, {
                     status: "error", 
                     data: err.message

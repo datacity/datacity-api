@@ -1,5 +1,21 @@
 var fs = require('fs');
 
+/**
+ * This module is a security module.
+ * It will be used each times we wan't check the parameters sended to an api call
+ * @module middleware
+ */
+
+/**
+ * Will send an error to the response
+ * @param  {Object}   err  error to send to the client
+ * @param {string} err.type the type of the error 
+ * @param {string} err.message the message of the error
+ * @param  {Object}   req  the server request object
+ * @param  {Object}   res  the server response object
+ * @param  {Function} next a callback to the next function
+ * @return {void}
+ */
 exports.errorHandler = function(err, req, res, next) {
    if(err.type &&  err.type == 'error'){
       res.json(200, {
@@ -18,6 +34,16 @@ function checkPath(path, callback) {
     });
 }
 
+
+/**
+ * This function will check all of parameters from req.params and call an apropriate function
+ * who will check each params of the request sended.
+ * @param  {Object}   req  the server request object
+ * @param  {string} req.params get parameters related to the client request
+ * @param  {Object}   res  the server response object
+ * @param  {Function} next a callback to the next function
+ * @return {void}
+ */
 exports.check = function(req, res, next) {
 	for (var key in req.params) {
 		if (req.params[key] == "") {
@@ -44,6 +70,5 @@ exports.check = function(req, res, next) {
 				break;
 		}
 	}
-
 	next();
 };

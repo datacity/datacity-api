@@ -10,7 +10,7 @@ var client = new elasticsearch.Client();
 
 // POST create a new user
 // TODO : Secure user creation to don't access form outside
-exports.create = function(req, res) {
+exports.createUser = function(req, res) {
   var body = req.body;
 
   if (!body.publicKey || !body.privateKey || !body.quota || !body.username) {
@@ -24,7 +24,11 @@ exports.create = function(req, res) {
      publicKey: body.publicKey,
      privateKey: body.privateKey,
      creation: new Date(),
-     quota: body.quota,
+     quota: {
+    	 limit: body.quota,
+    	 expiration: new Date(),
+    	 counter: 0
+     },
      username: body.username
    }
  }).then(function (resp) {
