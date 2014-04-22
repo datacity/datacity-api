@@ -1,4 +1,9 @@
 var fs = require('fs');
+var elasticsearch = require('elasticsearch');
+//see http://www.elasticsearch.org/blog/client-for-node-js-and-the-browser/
+
+//Connect to localhost:9200 and use the default settings
+var client = new elasticsearch.Client();
 
 /**
  * This module is a security module.
@@ -34,6 +39,17 @@ function checkPath(path, callback) {
     });
 }
 
+function checkPublicKey(publicKey, callback) {
+	client.search({
+		index : 'users',
+		type : 'user',
+		q : 'publicKey:' + publicKey
+	}).then(function(resp) {
+		callback(resp.hits.hits.length);
+	}, function(err) {
+		callback(0);
+	});
+}
 
 /**
  * This function will check all of parameters from req.params and call an apropriate function
@@ -52,7 +68,25 @@ exports.check = function(req, res, next) {
 		}
 		switch (key) {
 			case "publicKey":
-				// checkPublicKey(req.params[key]);
+				client.create({
+					   index: 'users',
+					   type: 'log',
+					   body: {
+					     publicKey: req.params[key],
+					     access: new Date(),
+					     url: req.url,
+					   }
+					 }).then(function (resp) {
+					    
+					 }, function(err) {
+					  console.log("Failed to create the user log");
+					 });
+				checkPublicKey(req.params[key], function(nbUsers) {
+					if (nbUsers == 0) {
+						next({type:"error", message: "The public key [" + req.params[key] + "] doesn't exist."});
+						return false;
+					}
+				});
 				break;
 			case "path":
 				if (checkPath(req.params[key], function(exists) {
@@ -71,4 +105,78 @@ exports.check = function(req, res, next) {
 		}
 	}
 	next();
+};
+
+/**
+ * This function will check the number of requests authorized by the user
+ * @param  {Object}   req  the server request object
+ * @param  {Object}   res  the server response object
+ * @param  {Function} next a callback to the next function
+ */
+exports.quota = function(req, res, next) {
+	var id = req.params.publicKey;
+	
+	client.search({
+	"index" : "users",
+	"type" : "user",
+	"body": {
+		"query": {
+			"match": {
+				"publicKey": id
+			}
+		}
+	}
+}).then(function(resp) {
+	var quota = resp.hits.hits[0]["_source"].quota;
+	var currentDate = new Date();
+	var expiration = new Date(quota.expiration);
+	if (expiration < currentDate) {
+		var newDate = new Date();
+		newDate.setDate(newDate.getDate() + 1);
+		client.update({
+			index: 'users',
+			type: 'user',
+			id: resp.hits.hits[0]["_id"],
+			body: {
+				script: "ctx._source.quota.counter = 1; ctx._source.quota.expiration = date",
+				upsert: {
+					quota: {
+						counter: 1,
+						expiration: "now+1d"
+					}
+				},
+				params: {
+					date: newDate
+				}
+			}
+		});
+		next();
+		return;
+	}
+	if (quota.counter >= quota.limit) {
+		 next({type:"error", message: "You have excedeed you quota requests"});
+		 return;
+	} else {
+		client.update({
+			index: 'users',
+			type: 'user',
+			id: resp.hits.hits[0]["_id"],
+			body: {
+				script: "ctx._source.quota.counter += 1;",
+				upsert: {
+					quota: {
+						counter: 1,
+						expiration: "now+1d"
+					}
+				}
+			}
+		});
+		next();
+		return;
+	}
+}, function(err) {
+	next({type:"error", message: err.message});
+	return;
+});
+	
 };
