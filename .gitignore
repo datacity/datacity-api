@@ -157,3 +157,6 @@ $RECYCLE.BIN/
 
 #Node modules
 node_modules/
+
+# Upload repository
+uploads/
