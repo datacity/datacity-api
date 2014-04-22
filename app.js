@@ -9,6 +9,9 @@ var sources = require('./routes/sources');
 var middleware = require('./middleware/middleware');
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
+
+var uploadDir = "./uploads/";
 
 
 var app = express();
@@ -33,7 +36,6 @@ if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
 
-
 // WARNING : seems cause issues in the header
 app.all('*', function(req, res, next) {
 res.header("Access-Control-Allow-Origin", "*");
@@ -45,7 +47,12 @@ next();
 
 /*************************************************************************/
 
-// test commit visualstudio
+// Create upload directory for the uploaded files
+fs.mkdir(uploadDir, function(error) {
+    if (error) {
+        console.log("Unable to create the upload directory : " + error);
+    }
+});
 
 app.get('/', routes.index);
 // TEST ROUTES
