@@ -13,7 +13,6 @@ var fs = require('fs');
 
 var uploadDir = "./uploads/";
 
-
 var app = express();
 
 // all environments
@@ -48,9 +47,14 @@ next();
 /*************************************************************************/
 
 // Create upload directory for the uploaded files
-fs.mkdir(uploadDir, function(error) {
-    if (error) {
-        console.log("Unable to create the upload directory : " + error);
+
+fs.exists(uploadDir, function(exists) {
+    if (!exists) {
+        fs.mkdir(uploadDir, function(error) {
+            if (error) {
+                console.log("Unable to create the upload directory : " + error);
+            }
+        });
     }
 });
 
