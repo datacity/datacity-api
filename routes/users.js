@@ -85,7 +85,7 @@ exports.delete = function(req, res) {
   
   res.json(200, {
     status: "success", 
-    data: resp
+    data: "User deleted"
   });
 }, function(err) {
 

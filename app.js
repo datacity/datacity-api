@@ -57,10 +57,10 @@ app.get('/file', files.list); // list all the files
 // USERS
 app.get('/user/:publicKey/parse/:path', middleware.check, files.parse);
 app.post('/user/:publicKey/upload', middleware.check, files.post);
-app.get('/user/:publicKey/files', middleware.check, files.user);
+app.get('/user/:publicKey/files', middleware.check, middleware.quota, files.user);
 app.delete('/user/:publicKey/file/:path', middleware.check, files.delete);
 app.get('/user', users.get);
-app.post('/user', users.create);
+app.post('/user', users.createUser);
 app.delete('/user/:publicKey', middleware.check, users.delete);
 
 // SOURCES

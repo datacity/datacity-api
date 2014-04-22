@@ -114,13 +114,20 @@ exports.parse = function(req, res) {
 
 exports.get = function(req, res) {
     var path = req.params.path;
-    var filePath = uploadDir + id;
+    var filePath = uploadDir + path;
 
     client.search({
     	index: 'files',
     	type: 'file',
     	q: 'path:"' + path + '"' 
-    }, function (error, response) {
+    }, function (err, response) {
+    	if (response.hits.hits.length == 0) {
+    		res.json(200, {
+    		    status: "error", 
+    		    message: "no file found"
+    		});
+    		return;
+    	}
     	var filename = response.hits.hits[0]["_source"]["name"];
     	res.download(filePath, filename);
     });
