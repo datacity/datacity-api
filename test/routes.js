@@ -10,22 +10,22 @@ var assert = require('assert');
 // Global parameters
 var url = "http://localhost:4567";
 var testUser = {
-	username : "test",
-	publicKey : "testPublicKey",
-	privateKey : "testPrivateKey",
-	quota : 100
+	username: "test",
+	publicKey: "testPublicKey",
+	privateKey: "testPrivateKey",
+	quota: 100
 };
 var filesDir = "../node-modules/genericparser/test/files/input/";
 var files = [
-             filesDir + "JSON_TelephonePublic.json",
-             filesDir + "JSON_Zoo.json",
-             ];
+	filesDir + "JSON_TelephonePublic.json",
+	filesDir + "JSON_Zoo.json",
+];
 
 // UNIT TEST
-describe('GET /dfdslk (wrong path)', function() {
-	it('should return an error', function(done) {
+describe('GET /dfdslk (wrong path)', function () {
+	it('should return an error', function (done) {
 		request(url).get('/dfdslk').expect('Content-Type', /json/)
-			.expect(200).end(function(err, res) {
+			.expect(200).end(function (err, res) {
 				var result = JSON.parse(res.text);
 				assert.equal(result.status, "error");
 				done();
@@ -33,70 +33,70 @@ describe('GET /dfdslk (wrong path)', function() {
 	});
 });
 
-describe('Users API', function() {
-	describe('GET /user', function() {
-		it('should return a list of users', function(done) {
+describe('Users API', function () {
+	describe('GET /user', function () {
+		it('should return a list of users', function (done) {
 			request(url).get('/user').expect('Content-Type', /json/)
-					.expect(200).end(function(err, res) {
-						var result = JSON.parse(res.text);
-						assert.equal(result.status, "success");
-						done();
-					});
+				.expect(200).end(function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
 		});
 	});
-	describe('POST /user', function() {
-		it('should return a confirmation', function(done) {
+	describe('POST /user', function () {
+		it('should return a confirmation', function (done) {
 			request(url).post('/user').send(testUser)
-					.expect('Content-Type', /json/).expect(200).end(
-							function(err, res) {
-								var result = JSON.parse(res.text);
-								assert.equal(result.status, "success");
-								done();
-							});
+				.expect('Content-Type', /json/).expect(200).end(
+				function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
 		});
 	});
-	describe('DELETE /user/' + testUser.publicKey, function() {
-		it('should return a confirmation', function(done) {
+	describe('DELETE /user/' + testUser.publicKey, function () {
+		it('should return a confirmation', function (done) {
 			request(url).delete('/user/' + testUser.publicKey)
-					.expect('Content-Type', /json/).expect(200).end(
-							function(err, res) {
-								var result = JSON.parse(res.text);
-								assert.equal(result.status, "success");
-								done();
-							});
+				.expect('Content-Type', /json/).expect(200).end(
+				function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
 		});
 	});
 });
 
-describe('Files API', function() {
-	describe('GET /file', function() {
-		it('should return a list of files', function(done) {
+describe('Files API', function () {
+	describe('GET /file', function () {
+		it('should return a list of files', function (done) {
 			request(url).get('/user').expect('Content-Type', /json/)
-					.expect(200).end(function(err, res) {
-						var result = JSON.parse(res.text);
-						assert.equal(result.status, "success");
-						done();
-					});
+				.expect(200).end(function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
 		});
 	});
-	describe('GET /file/feferfr (wrong path)', function() {
-		it('should return an error', function(done) {
+	describe('GET /file/feferfr (wrong path)', function () {
+		it('should return an error', function (done) {
 			request(url).get('/file/feferfr').expect('Content-Type', /json/)
-					.expect(200).end(function(err, res) {
-						var result = JSON.parse(res.text);
-						assert.equal(result.status, "error");
-						done();
-					});
+				.expect(200).end(function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "error");
+					done();
+				});
 		});
 	});
-	describe('GET /user/' + testUser.publicKey + '/files', function() {
-		it('should return a list of files of the user', function(done) {
+	describe('GET /user/' + testUser.publicKey + '/files', function () {
+		it('should return a list of files of the user', function (done) {
 			request(url).get('/user/' + testUser.publicKey + '/files').expect('Content-Type', /json/)
-					.expect(200).end(function(err, res) {
-						var result = JSON.parse(res.text);
-						assert.equal(result.status, "success");
-						done();
-					});
+				.expect(200).end(function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
 		});
 	});
 });

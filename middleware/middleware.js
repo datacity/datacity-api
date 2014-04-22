@@ -21,34 +21,35 @@ var client = new elasticsearch.Client();
  * @param  {Function} next a callback to the next function
  * @return {void}
  */
-exports.errorHandler = function(err, req, res, next) {
-   if(err.type &&  err.type == 'error'){
-      res.json(200, {
-      	status: "error",
-      	message: err.message});
-      return;
-   }
-   next(err);
+exports.errorHandler = function (err, req, res, next) {
+	if (err.type && err.type == 'error') {
+		res.json(200, {
+			status: "error",
+			message: err.message
+		});
+		return;
+	}
+	next(err);
 };
 
 function checkPath(path, callback) {
 	var uploadDir = "./uploads/";
 	var dirName = uploadDir + path;
-    fs.exists(dirName, function(exists) {
-    	callback(exists);
-    });
+	fs.exists(dirName, function (exists) {
+		callback(exists);
+	});
 }
 
 function checkPublicKey(publicKey, callback) {
 	client.search({
-		index : 'users',
-		type : 'user',
-		q : 'publicKey:' + publicKey
-	}).then(function(resp) {
-		callback(resp.hits.hits.length);
-	}, function(err) {
-		callback(0);
-	});
+		index: 'users',
+		type: 'user',
+		q: 'publicKey:' + publicKey
+	}).then(function (resp) {
+			callback(resp.hits.hits.length);
+		}, function (err) {
+			callback(0);
+		});
 }
 
 /**
@@ -60,38 +61,38 @@ function checkPublicKey(publicKey, callback) {
  * @param  {Function} next a callback to the next function
  * @return {void}
  */
-exports.check = function(req, res, next) {
+exports.check = function (req, res, next) {
 	for (var key in req.params) {
 		if (req.params[key] == "") {
-			next({type:"error", message: "The value [" + key + "] is empty."});
+			next({ type: "error", message: "The value [" + key + "] is empty." });
 			return;
 		}
 		switch (key) {
 			case "publicKey":
 				client.create({
-					   index: 'users',
-					   type: 'log',
-					   body: {
-					     publicKey: req.params[key],
-					     access: new Date(),
-					     url: req.url,
-					   }
-					 }).then(function (resp) {
-					    
-					 }, function(err) {
-					  console.log("Failed to create the user log");
-					 });
-				checkPublicKey(req.params[key], function(nbUsers) {
+					index: 'users',
+					type: 'log',
+					body: {
+						publicKey: req.params[key],
+						access: new Date(),
+						url: req.url,
+					}
+				}).then(function (resp) {
+
+					}, function (err) {
+						console.log("Failed to create the user log");
+					});
+				checkPublicKey(req.params[key], function (nbUsers) {
 					if (nbUsers == 0) {
-						next({type:"error", message: "The public key [" + req.params[key] + "] doesn't exist."});
+						next({ type: "error", message: "The public key [" + req.params[key] + "] doesn't exist." });
 						return false;
 					}
 				});
 				break;
 			case "path":
-				if (checkPath(req.params[key], function(exists) {
+				if (checkPath(req.params[key], function (exists) {
 					if (!exists) {
-						next({type:"error", message: "The file id [" + req.params[key] + "] doesn't exist."});
+						next({ type: "error", message: "The file id [" + req.params[key] + "] doesn't exist." });
 						return false;
 					}
 				})) {
@@ -99,7 +100,7 @@ exports.check = function(req, res, next) {
 				}
 				break;
 			default:
-				next({type:"error", message: "Unknown identifier [" + key + "] in the url."});
+				next({ type: "error", message: "Unknown identifier [" + key + "] in the url." });
 				return;
 				break;
 		}
@@ -113,70 +114,70 @@ exports.check = function(req, res, next) {
  * @param  {Object}   res  the server response object
  * @param  {Function} next a callback to the next function
  */
-exports.quota = function(req, res, next) {
+exports.quota = function (req, res, next) {
 	var id = req.params.publicKey;
-	
+
 	client.search({
-	"index" : "users",
-	"type" : "user",
-	"body": {
-		"query": {
-			"match": {
-				"publicKey": id
+		"index": "users",
+		"type": "user",
+		"body": {
+			"query": {
+				"match": {
+					"publicKey": id
+				}
 			}
 		}
-	}
-}).then(function(resp) {
-	var quota = resp.hits.hits[0]["_source"].quota;
-	var currentDate = new Date();
-	var expiration = new Date(quota.expiration);
-	if (expiration < currentDate) {
-		var newDate = new Date();
-		newDate.setDate(newDate.getDate() + 1);
-		client.update({
-			index: 'users',
-			type: 'user',
-			id: resp.hits.hits[0]["_id"],
-			body: {
-				script: "ctx._source.quota.counter = 1; ctx._source.quota.expiration = date",
-				upsert: {
-					quota: {
-						counter: 1,
-						expiration: "now+1d"
+	}).then(function (resp) {
+			var quota = resp.hits.hits[0]["_source"].quota;
+			var currentDate = new Date();
+			var expiration = new Date(quota.expiration);
+			if (expiration < currentDate) {
+				var newDate = new Date();
+				newDate.setDate(newDate.getDate() + 1);
+				client.update({
+					index: 'users',
+					type: 'user',
+					id: resp.hits.hits[0]["_id"],
+					body: {
+						script: "ctx._source.quota.counter = 1; ctx._source.quota.expiration = date",
+						upsert: {
+							quota: {
+								counter: 1,
+								expiration: "now+1d"
+							}
+						},
+						params: {
+							date: newDate
+						}
 					}
-				},
-				params: {
-					date: newDate
-				}
+				});
+				next();
+				return;
 			}
-		});
-		next();
-		return;
-	}
-	if (quota.counter >= quota.limit) {
-		 next({type:"error", message: "You have excedeed you quota requests"});
-		 return;
-	} else {
-		client.update({
-			index: 'users',
-			type: 'user',
-			id: resp.hits.hits[0]["_id"],
-			body: {
-				script: "ctx._source.quota.counter += 1;",
-				upsert: {
-					quota: {
-						counter: 1,
-						expiration: "now+1d"
+			if (quota.counter >= quota.limit) {
+				next({ type: "error", message: "You have excedeed you quota requests" });
+				return;
+			} else {
+				client.update({
+					index: 'users',
+					type: 'user',
+					id: resp.hits.hits[0]["_id"],
+					body: {
+						script: "ctx._source.quota.counter += 1;",
+						upsert: {
+							quota: {
+								counter: 1,
+								expiration: "now+1d"
+							}
+						}
 					}
-				}
+				});
+				next();
+				return;
 			}
+		}, function (err) {
+			next({ type: "error", message: err.message });
+			return;
 		});
-		next();
-		return;
-	}
-}, function(err) {
-	next({type:"error", message: err.message});
-	return;
-});
-	
+
 };

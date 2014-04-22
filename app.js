@@ -22,40 +22,40 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.limit(100000000)); // TODO : replace this deprecated function
-app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb'}));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb' }));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(middleware.errorHandler);
-app.use(express.errorHandler({dumpExceptions:true, showStack:true})); // TODO : check the right way for the event handler
+app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); // TODO : check the right way for the event handler
 
 // development only
 if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
+	app.use(express.errorHandler());
 }
 
 // WARNING : seems cause issues in the header
-app.all('*', function(req, res, next) {
-res.header("Access-Control-Allow-Origin", "*");
-res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
-res.header("Access-Control-Allow-Credentials", "true");
-res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
-next();
+app.all('*', function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+	res.header("Access-Control-Allow-Credentials", "true");
+	res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
+	next();
 });
 
 /*************************************************************************/
 
 // Create upload directory for the uploaded files
 
-fs.exists(uploadDir, function(exists) {
-    if (!exists) {
-        fs.mkdir(uploadDir, function(error) {
-            if (error) {
-                console.log("Unable to create the upload directory : " + error);
-            }
-        });
-    }
+fs.exists(uploadDir, function (exists) {
+	if (!exists) {
+		fs.mkdir(uploadDir, function (error) {
+			if (error) {
+				console.log("Unable to create the upload directory : " + error);
+			}
+		});
+	}
 });
 
 app.get('/', routes.index);
@@ -81,13 +81,13 @@ app.get('/source/:category/model', sources.getModel);
 app.get('/source/:name/download', sources.get);
 
 // ALL
-app.get('/*', function(req, res, next) {
-	next({type: "error", message:"Unknown route [" + req.url + "]."});
+app.get('/*', function (req, res, next) {
+	next({ type: "error", message: "Unknown route [" + req.url + "]." });
 });
 
 /*************************************************************************/
 
-http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+http.createServer(app).listen(app.get('port'), function () {
+	console.log('Express server listening on port ' + app.get('port'));
 });
- 
+
