@@ -2,7 +2,6 @@ var formidable = require('formidable');
 var elasticsearch = require('elasticsearch');
 var chardet = require('chardet');
 var genericParser = require('genericparser');
-var utils = require('./utils');
 var fs = require('fs');
 
 var uploadDir = "./uploads/";
