@@ -6,13 +6,14 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "~3.4.8",
-    "ejs": "~0.8.5",
+    "express": "^3.5.1",
+    "ejs": "^0.8.8",
     "formidable": "~1.0.14",
-    "elasticsearch": "~1.5.2",
+    "elasticsearch": "^1.5.14",
     "chardet": "0.0.8",
     "should": "^3.3.1",
     "supertest": "^0.11.0",
-    "mocha": "^1.18.2"
+    "mocha": "^1.18.2",
+    "genericparser": "git+https://e2714174376379b075d04da9db65b94255a8d5e2:x-oauth-basic@github.com/palmsnipe/datacity-parser.git"
   }
 }
