@@ -46,13 +46,9 @@ router.post('/add', function(req, res) {
 			username: body.username
 		}
 	}).then(function (resp) {
-		var list = [];
-		for (var user in resp.hits.hits) {
-			list.push(resp.hits.hits[user]["_source"]);
-		}
 		res.json(200, {
 			status: "success",
-			data: list
+			data: "User created"
 		});
 	}, function (err) {
 		console.trace(err.message);
@@ -99,11 +95,18 @@ router.delete('/:publicKey', function(req, res) {
 		type: 'user',
 		q: 'publicKey: "' + publicKey + '"'
 	}).then(function (resp) {
-		var user = resp.hits.hits[0];
-		res.json(200, {
-			status: "success",
-			data: "user deleted"
-		});
+		var shards = resp["_indices"].users["_shards"];
+		if (shards.failed == 0) {
+			res.json(200, {
+				status: "success",
+				data: "user deleted"
+			});
+		} else {
+			res.json(200, {
+				status: "error",
+				message: "successful: " + shards.successful + ", failed: " + shards.failed + ", total: " + shards.total
+			});
+		}
 	}, function (err) {
 		console.trace(err.message);
 	});
