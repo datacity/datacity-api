@@ -14,8 +14,7 @@ var client = new elasticsearch.Client();
  */
 // POST upload multiple user file
 exports.post = function (req, res) {
-	var id = req.params.publicKey;
-
+	var publicKey = req.params.publicKey;
 	var form = new formidable.IncomingForm();
 	var files = [];
 	form.uploadDir = uploadDir;
@@ -28,17 +27,19 @@ exports.post = function (req, res) {
 			type: fileForm.type,
 			size: fileForm.size,
 			encoding: chardet.detectFileSync(fileForm.path),
-			publicKey: id // TODO : put real user ID -> elasticsearch
+			publicKey: publicKey
 		};
-		client.create({
-			index: 'files',
-			type: 'file',
-			body: file
-		}).then(function (resp) {
-				res.json(200, { status: "error", message: "from: " + req.url + " : Failed to save the file \"" + file.name + "\" . " + resp });
-			}, function (err) {
-
-			});
+		//client.create({
+		//	index: 'files',
+		//	type: 'file',
+		//	body: file
+		//}).then(function (resp) {
+		//		//console.dir(resp);
+		//	}, function (err) {
+		//		next({ type: "error", message: "Unable to save the file" });
+				
+		//		//res.json(200, { status: "error", message: "from: " + req.url + " : Failed to save the file \"" + file.name + "\" . " + resp });
+		//	});
 		files.push(file);
 	});
 	form.on('end', function () {
@@ -46,8 +47,7 @@ exports.post = function (req, res) {
 			status: "success",
 			data: {
 				"files": files
-			},
-			message: "from: " + req.url + ": file upload successfully!"
+			}
 		});
 	});
 	form.on('error', function (err) {
@@ -115,29 +115,38 @@ exports.get = function (req, res) {
 	var path = req.params.path;
 	var filePath = uploadDir + path;
 
+	console.log(path);
 	client.search({
-		index: 'files',
-		type: 'file',
-		q: 'path:"' + path + '"'
-	}, function (err, response) {
+		"index": "files",
+		"type": "file",
+		"body": {
+			"query": {
+				"match": {
+					"path": path
+				}
+			}
+		}
+	}).then(function (resp) {
 			if (response.hits.hits.length == 0) {
-				res.json(200, {
+				resp.json(200, {
 					status: "error",
 					message: "no file found"
 				});
 				return;
 			}
 			var filename = response.hits.hits[0]["_source"]["name"];
-			res.download(filePath, filename);
-		});
+			//resp.download(filePath, filename);
+		}, function (err) {
+			resp.json(200, { type: "error", message: "dsddssd = " + err.message });
+		return;
+	});
 };
 
 
 exports.list = function (req, res) {
 	client.search({
 		index: 'files',
-		type: 'file',
-		q: 'path:*'
+		type: 'file'
 	}).then(function (resp) {
 			var list = [];
 			for (var file in resp.hits.hits) {
@@ -154,8 +163,7 @@ exports.list = function (req, res) {
 			}
 			res.json(200, {
 				status: "success",
-				data: list,
-				message: "from: " + req.url
+				data: list
 			});
 		}, function (err) {
 			res.json(200, {

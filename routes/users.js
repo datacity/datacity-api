@@ -49,18 +49,11 @@ exports.createUser = function (req, res) {
 exports.get = function (req, res) {
 	client.search({
 		index: 'users',
-		type: 'user',
-		q: 'username:*'
+		type: 'user'
 	}).then(function (resp) {
 			var list = [];
 			for (var user in resp.hits.hits) {
-				list.push({
-					id: resp.hits.hits[user]["_id"],
-					publicKey: resp.hits.hits[user]["_source"]["publicKey"],
-					username: resp.hits.hits[user]["_source"]["username"],
-					quota: resp.hits.hits[user]["_source"]["quota"],
-					creation: resp.hits.hits[user]["_source"]["creation"]
-				});
+				list.push(resp.hits.hits[user]["_source"]);
 			}
 			res.json(200, {
 				status: "success",
@@ -69,29 +62,32 @@ exports.get = function (req, res) {
 		}, function (err) {
 			res.json(200, {
 				status: "error",
-				data: "from: " + req.url + ": " + err.message
+				data: err.message
 			});
 		});
 };
 
 // DELETE the user
-exports.delete = function (req, res) {
-	var id = req.params.id;
-	client.deleteByQuery({
-		index: 'users',
-		type: 'user',
-		q: 'publicKey: "' + id + '"'
-	}).then(function (resp) {
-
-			res.json(200, {
-				status: "success",
-				data: "User deleted"
-			});
-		}, function (err) {
-
-			res.json(200, {
-				status: "error",
-				data: err.message
-			});
-		});
+exports.remove = function (req, res) {
+	//console.log("coucou");
+	var id = req.params.publicKey;
+	//console.log("publicKey = " + id);
+	//client.deleteByQuery({
+	//	index: 'users',
+	//	type: 'user',
+	//	q: 'publicKey: "' + id + '"'
+	//}).then(function (resp) {
+	//		console.log("yes");
+	//		res.json(200, {
+	//			status: "success",
+	//			data: "User deleted"
+	//		});
+	//	}, function (err) {
+	//			console.log("non");
+	//			console.dir(err);
+	//		res.json(200, {
+	//			status: "error",
+	//			data: err.message
+	//		});
+	//	});
 };

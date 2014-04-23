@@ -73,7 +73,7 @@ app.get('/user/:publicKey/files', middleware.check, middleware.quota, files.user
 app.delete('/user/:publicKey/file/:path', middleware.check, files.delete);
 app.get('/user', users.get);
 app.post('/user', users.createUser);
-app.delete('/user/:publicKey', middleware.check, users.delete);
+app.delete('/user/:publicKey', middleware.check, users.remove);
 
 // SOURCES
 app.post('/user/:id/source/:category/:name/upload', sources.post);

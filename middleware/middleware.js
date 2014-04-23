@@ -63,31 +63,20 @@ function checkPublicKey(publicKey, callback) {
  */
 exports.check = function (req, res, next) {
 	for (var key in req.params) {
-		if (req.params[key] == "") {
-			next({ type: "error", message: "The value [" + key + "] is empty." });
-			return;
-		}
+		//if (req.params[key] == "") {
+		//	next({ type: "error", message: "The value [" + key + "] is empty." });
+		//	return;
+		//}
 		switch (key) {
 			case "publicKey":
-				client.create({
-					index: 'users',
-					type: 'log',
-					body: {
-						publicKey: req.params[key],
-						access: new Date(),
-						url: req.url,
-					}
-				}).then(function (resp) {
-
-					}, function (err) {
-						console.log("Failed to create the user log");
-					});
-				checkPublicKey(req.params[key], function (nbUsers) {
-					if (nbUsers == 0) {
-						next({ type: "error", message: "The public key [" + req.params[key] + "] doesn't exist." });
-						return false;
-					}
-				});
+				//if (checkPublicKey(req.params[key], function (nbUsers) {
+				//	if (nbUsers == 0) {
+				//		next({ type: "error", message: "The public key [" + req.params[key] + "] doesn't exist." });
+				//		return false;
+				//	}
+				//})) {
+				//	return;
+				//}
 				break;
 			case "path":
 				if (checkPath(req.params[key], function (exists) {
