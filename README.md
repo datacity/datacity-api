@@ -9,6 +9,7 @@ Click [here](./htmldoc_en/index.html "") to have the documentation of the module
 ### Utilisateurs
 
 `GET http://localhost:4567/users/list` Liste des utilisateurs
+
 `POST http://localhost:4567/users/add` Ajout d'un utilisateur
 ```json
 {
@@ -18,5 +19,11 @@ Click [here](./htmldoc_en/index.html "") to have the documentation of the module
 	quota: 100
 }
 ```
+
 `GET http://localhost:4567/users/:publicKey` Informations de l'utilisateur
+
 `DELETE http://localhost:4567/users/:publicKey` Supprime l'utilisateur
+
+### Fichiers
+
+`POST http://localhost:4567/files/add/:publicKey` Ajout de fichiers

@@ -19,14 +19,11 @@ fs.exists(uploadDir, function (exists) {
 	}
 });
 
-// TODO put the routes here
-
-
-module.exports = router;
-
 /*
-// POST upload multiple user file
-exports.post = function (req, res) {
+ * POST to adduser.
+ */
+router.post('/add/:publicKey', function(req, res) {
+	var db = req.db;
 	var publicKey = req.params.publicKey;
 	var form = new formidable.IncomingForm();
 	var files = [];
@@ -42,17 +39,18 @@ exports.post = function (req, res) {
 			encoding: chardet.detectFileSync(fileForm.path),
 			publicKey: publicKey
 		};
-		//client.create({
-		//	index: 'files',
-		//	type: 'file',
-		//	body: file
-		//}).then(function (resp) {
-		//		//console.dir(resp);
-		//	}, function (err) {
-		//		next({ type: "error", message: "Unable to save the file" });
+		db.create({
+			index: 'files',
+			type: 'file',
+			body: file
+		}).then(function (resp) {
 				
-		//		//res.json(200, { status: "error", message: "from: " + req.url + " : Failed to save the file \"" + file.name + "\" . " + resp });
-		//	});
+			}, function (err) {
+				res.json(200, {
+					status: "error",
+					message: "from: " + req.url + " : Failed to save the file \"" + file.name + "\" . " + resp
+				});
+			});
 		files.push(file);
 	});
 	form.on('end', function () {
@@ -70,8 +68,12 @@ exports.post = function (req, res) {
 		});
 	});
 	form.parse(req);
-};
+});
 
+
+module.exports = router;
+
+/*
 // GET The File from the path 
 exports.parse = function (req, res) {
 	var path = req.params.path;

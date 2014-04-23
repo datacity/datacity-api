@@ -83,8 +83,9 @@ describe('Users API', function () {
 	});
 });
 
-/*
+
 describe('Files API', function () {
+	/*
 	describe('GET /file', function () {
 		it('should return a list of files', function (done) {
 			request(url).get('/user').expect('Content-Type', /json/)
@@ -105,30 +106,30 @@ describe('Files API', function () {
 				});
 		});
 	});
-	//describe('GET /user/' + testUser.publicKey + '/files (but no files)', function () {
-	//	it('should return a list of files of the user', function (done) {
-	//		request(url).get('/user/' + testUser.publicKey + '/files').expect('Content-Type', /json/)
-	//			.expect(200).end(function (err, res) {
-	//				var result = JSON.parse(res.text);
-	//				assert.equal(result.status, "error");
-	//				done();
-	//			});
-	//	});
-	//});
-	//describe('POST /user/' + testUser.publicKey + '/upload', function () {
-	//	it('should return a detailed list of uploaded files', function (done) {
-	//		request(url).post('/user/' + testUser.publicKey + '/upload').attach('file', files[0])
-	//			.expect('Content-Type', /json/).expect(200).end(
-	//			function (err, res) {
-	//				console.log(res);
-	//				//var result = JSON.parse(res.text);
-	//				//assert.equal(result.status, "success");
-	//				done();
-	//			});
-	//	});
-	//});
+	describe('GET /user/' + testUser.publicKey + '/files (but no files)', function () {
+		it('should return a list of files of the user', function (done) {
+			request(url).get('/user/' + testUser.publicKey + '/files').expect('Content-Type', /json/)
+				.expect(200).end(function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "error");
+					done();
+				});
+		});
+	});
+	*/
+	describe('POST /files/add/' + testUser.publicKey + ' - Upload a file', function () {
+		it('should return a detailed list of uploaded files', function (done) {
+			request(url).post('/files/add/' + testUser.publicKey).attach('file', files[0])
+				.expect('Content-Type', /json/).expect(200).end(
+				function (err, res) {
+					var result = JSON.parse(res.text);
+					assert.equal(result.status, "success");
+					done();
+				});
+		});
+	});
 });
-*/
+
 
 // TUTOS
 // http://www.jorisooms.be/testing-your-node-api-with-supertest/
