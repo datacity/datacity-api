@@ -1,17 +1,30 @@
 var formidable = require('formidable');
-var elasticsearch = require('elasticsearch');
 var chardet = require('chardet');
 var genericParser = require('genericparser');
 var fs = require('fs');
-
-var uploadDir = "./uploads/";
-
-// Connect to localhost:9200 and use the default settings
-var client = new elasticsearch.Client();
+var express = require('express');
+var router = express.Router();
 
 /*
- * Files Routes
+ * Create upload directory for the uploaded files
  */
+var uploadDir = "./uploads/";
+fs.exists(uploadDir, function (exists) {
+	if (!exists) {
+		fs.mkdir(uploadDir, function (error) {
+			if (error) {
+				console.log("Unable to create the upload directory : " + error);
+			}
+		});
+	}
+});
+
+// TODO put the routes here
+
+
+module.exports = router;
+
+/*
 // POST upload multiple user file
 exports.post = function (req, res) {
 	var publicKey = req.params.publicKey;
@@ -242,3 +255,4 @@ exports.delete = function (req, res) {
 		}
 	});
 }
+*/

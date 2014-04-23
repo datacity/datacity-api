@@ -1,23 +1,37 @@
-var elasticsearch = require('elasticsearch');
-// see http://www.elasticsearch.org/blog/client-for-node-js-and-the-browser/
-
-// Connect to localhost:9200 and use the default settings
-var client = new elasticsearch.Client();
+var express = require('express');
+var router = express.Router();
 
 /*
- * Users Routes
+ * GET userlist.
  */
+router.get('/list', function(req, res) {
+    var db = req.db;
 
-// POST create a new user
-// TODO : Secure user creation to don't access form outside
-exports.createUser = function (req, res) {
+	db.search({
+		index: 'users',
+		type: 'user'
+	}).then(function (resp) {
+		var list = [];
+		for (var user in resp.hits.hits) {
+			list.push(resp.hits.hits[user]["_source"]);
+		}
+		res.json(200, {
+			status: "success",
+			data: list
+		});
+	}, function (err) {
+		console.trace(err.message);
+	});
+});
+
+/*
+ * POST to adduser.
+ */
+router.post('/add', function(req, res) {
+	var db = req.db;
 	var body = req.body;
 
-	if (!body.publicKey || !body.privateKey || !body.quota || !body.username) {
-		res.json(200, { status: "error", message: "Invalid request" });
-	}
-
-	client.create({
+	db.create({
 		index: 'users',
 		type: 'user',
 		body: {
@@ -32,62 +46,77 @@ exports.createUser = function (req, res) {
 			username: body.username
 		}
 	}).then(function (resp) {
-			res.json(200, {
-				status: "success",
-				data: "user created"
-			});
-			// res.json(200, { status: "error", message: "Failed to create the user. " + response });
-		}, function (err) {
-			res.json(200, {
-				status: "error",
-				data: err.message
-			});
+		var list = [];
+		for (var user in resp.hits.hits) {
+			list.push(resp.hits.hits[user]["_source"]);
+		}
+		res.json(200, {
+			status: "success",
+			data: list
 		});
-};
+	}, function (err) {
+		console.trace(err.message);
+	});
+});
 
-// GET the list of users
-exports.get = function (req, res) {
-	client.search({
+/*
+ * Get an user
+ */
+router.get('/:publicKey', function(req, res) {
+    var db = req.db;
+	var user = req.params.publicKey;
+
+	db.search({
 		index: 'users',
-		type: 'user'
-	}).then(function (resp) {
-			var list = [];
-			for (var user in resp.hits.hits) {
-				list.push(resp.hits.hits[user]["_source"]);
+		type: 'user',
+		body: {
+			query: {
+				match: {
+					publicKey: user
+				}
 			}
-			res.json(200, {
-				status: "success",
-				data: list
-			});
-		}, function (err) {
-			res.json(200, {
-				status: "error",
-				data: err.message
-			});
+		}
+	}).then(function (resp) {
+		var user = resp.hits.hits[0];
+		res.json(200, {
+			status: "success",
+			data: user
 		});
-};
+	}, function (err) {
+		console.trace(err.message);
+	});
+});
 
-// DELETE the user
-exports.remove = function (req, res) {
-	//console.log("coucou");
-	var id = req.params.publicKey;
-	//console.log("publicKey = " + id);
-	//client.deleteByQuery({
-	//	index: 'users',
-	//	type: 'user',
-	//	q: 'publicKey: "' + id + '"'
-	//}).then(function (resp) {
-	//		console.log("yes");
-	//		res.json(200, {
-	//			status: "success",
-	//			data: "User deleted"
-	//		});
-	//	}, function (err) {
-	//			console.log("non");
-	//			console.dir(err);
-	//		res.json(200, {
-	//			status: "error",
-	//			data: err.message
-	//		});
-	//	});
-};
+/*
+ * delete an user
+ */
+router.delete('/:publicKey', function(req, res) {
+    var db = req.db;
+	var publicKey = req.params.publicKey;
+
+	db.deleteByQuery({
+		index: 'users',
+		type: 'user',
+		q: 'publicKey: "' + publicKey + '"'
+	}).then(function (resp) {
+		var user = resp.hits.hits[0];
+		res.json(200, {
+			status: "success",
+			data: "user deleted"
+		});
+	}, function (err) {
+		console.trace(err.message);
+	});
+});
+
+/*
+ * update an user
+ */
+router.delete('/:publicKey', function(req, res) {
+    var db = req.db;
+	var publicKey = req.params.publicKey;
+
+	// TODO make update on user
+});
+
+module.exports = router;
