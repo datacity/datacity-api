@@ -1,9 +1,10 @@
 var express = require('express');
+var router = express.Router();
 var fs = require('fs');
 var formidable = require('formidable');
 var chardet = require('chardet');
 var genericParser = require('genericparser');
-var router = express.Router();
+var middleware = require('./middleware');
 
 /*
  * Create upload directory for the uploaded files
@@ -22,31 +23,7 @@ fs.exists(uploadDir, function (exists) {
 /*
  * File path middleware
  */
-router.param('path', function(req, res, next, path){
-	var db = req.db;
-	db.search({
-		index: 'files',
-		type: 'file',
-		body: {
-			query: {
-				match: {
-					path: path
-				}
-			}
-		}
-	}).then(function (resp) {
-		if (resp.hits.hits.length == 0) {
-			return next(new Error('file not found'));
-		}
-		else if (resp.hits.hits.length > 1) {
-			return next(new Error('multiple files found'));
-		}
-		req.file = resp.hits.hits[0]["_source"];
-		next();
-	}, function (err) {
-		return next(err);
-	});
-});
+router.param('path', middleware.path);
 
 
 /*

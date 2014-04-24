@@ -1,40 +1,17 @@
 var express = require('express');
+var router = express.Router();
 var fs = require('fs');
 var formidable = require('formidable');
 var chardet = require('chardet');
 var genericParser = require('genericparser');
-var router = express.Router();
+var middleware = require('./middleware');
 
 var uploadDir = "./uploads/";
 
 /*
  * User middleware
  */
-router.param('publicKey', function(req, res, next, publicKey){
-	var db = req.db;
-	db.search({
-		index: 'users',
-		type: 'user',
-		body: {
-			query: {
-				match: {
-					publicKey: publicKey
-				}
-			}
-		}
-	}).then(function (resp) {
-		if (resp.hits.hits.length == 0) {
-			return next(new Error('user not found'));
-		}
-		else if (resp.hits.hits.length > 1) {
-			return next(new Error('multiple users found'));
-		}
-		req.user = resp.hits.hits[0]["_source"];
-		next();
-	}, function (err) {
-		return next(err);
-	});
-});
+router.param('publicKey', middleware.publicKey);
 
 
 /*

@@ -120,6 +120,7 @@ describe('Files API', function () {
 	*/
 });
 
+/*
 describe('Site API - Delete the user', function () {
 	describe('DELETE /site/users/' + testUser.publicKey + ' - Delete an user', function () {
 		it('should return a confirmation', function (done) {
@@ -133,6 +134,7 @@ describe('Site API - Delete the user', function () {
 		});
 	});
 });
+*/
 
 
 // TUTOS
