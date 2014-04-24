@@ -95,6 +95,7 @@ describe('Files API', function () {
 				});
 		});
 	});
+	*/
 	describe('GET /file/feferfr (wrong path)', function () {
 		it('should return an error', function (done) {
 			request(url).get('/file/feferfr').expect('Content-Type', /json/)
@@ -105,6 +106,7 @@ describe('Files API', function () {
 				});
 		});
 	});
+	/*
 	describe('GET /user/' + testUser.publicKey + '/files (but no files)', function () {
 		it('should return a list of files of the user', function (done) {
 			request(url).get('/user/' + testUser.publicKey + '/files').expect('Content-Type', /json/)

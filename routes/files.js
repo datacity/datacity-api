@@ -19,6 +19,52 @@ fs.exists(uploadDir, function (exists) {
 	}
 });
 
+/*
+ * File path middleware
+ */
+router.param('path', function(req, res, next, path){
+	var db = req.db;
+	db.search({
+		index: 'files',
+		type: 'file',
+		body: {
+			query: {
+				match: {
+					path: path
+				}
+			}
+		}
+	}).then(function (resp) {
+		if (resp.hits.hits.length == 0) {
+			return next(new Error('file not found'));
+		}
+		else if (resp.hits.hits.length > 1) {
+			return next(new Error('multiple files found'));
+		}
+		req.file = resp.hits.hits[0]["_source"];
+		next();
+	}, function (err) {
+		return next(err);
+	});
+});
+
+
+/*
+ * Get a file
+ */
+router.get('/:path', function(req, res) {
+	var file = req.file;
+	res.download(uploadDir + file.path, file.name);
+});
+
+
+
+
+
+
+
+
+
 module.exports = router;
 
 /*
@@ -73,38 +119,6 @@ exports.parse = function (req, res) {
 			});
 		});
 }
-
-exports.get = function (req, res) {
-	var path = req.params.path;
-	var filePath = uploadDir + path;
-
-	console.log(path);
-	client.search({
-		"index": "files",
-		"type": "file",
-		"body": {
-			"query": {
-				"match": {
-					"path": path
-				}
-			}
-		}
-	}).then(function (resp) {
-			if (response.hits.hits.length == 0) {
-				resp.json(200, {
-					status: "error",
-					message: "no file found"
-				});
-				return;
-			}
-			var filename = response.hits.hits[0]["_source"]["name"];
-			//resp.download(filePath, filename);
-		}, function (err) {
-			resp.json(200, { type: "error", message: "dsddssd = " + err.message });
-		return;
-	});
-};
-
 
 exports.list = function (req, res) {
 	client.search({

@@ -21,7 +21,6 @@ var users = require('./routes/users');
 var files = require('./routes/files');
 var site = require('./routes/site');
 //var sources = require('./routes/sources');
-//var middleware = require('./middleware/middleware');
 
 
 var app = express();
