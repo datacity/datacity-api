@@ -139,6 +139,7 @@ router.get('/:publicKey/files/list', function(req, res) {
  */
 router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 	var db = req.db;
+	var path = req.params.path;
 	var dirName = uploadDir + path;
 	
 	var name = req.file.name;
