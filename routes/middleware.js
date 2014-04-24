@@ -15,6 +15,48 @@ var middlewareUser = function(req, res, next, publicKey){
 			return next(new Error('multiple users found'));
 		}
 		req.user = resp.hits.hits[0]["_source"];
+		var currentDate = new Date();
+		var expiration = new Date(req.user.quota.expiration);
+		if (expiration < currentDate) {
+			var newDate = new Date();
+			newDate.setDate(newDate.getDate() + 1);
+			db.update({
+				index: 'users',
+				type: 'user',
+				id: publicKey,
+				body: {
+					script: "ctx._source.quota.counter = 1; ctx._source.quota.expiration = date",
+					upsert: {
+						quota: {
+							counter: 1,
+							expiration: "now+1d"
+						}
+					},
+					params: {
+						date: newDate
+					}
+				}
+			});
+			next();
+			return;
+		}
+		if (req.user.quota.counter >= req.user.quota.limit) {
+			return (next(new Error("You have excedeed you quota requests")));
+		}
+		db.update({
+			index: 'users',
+			type: 'user',
+			id: publicKey,
+			body: {
+				script: "ctx._source.quota.counter += 1;",
+				upsert: {
+					quota: {
+						counter: 1,
+						expiration: "now+1d"
+					}
+				}
+			}
+		});
 		next();
 	}, function (err) {
 		return next(err);
