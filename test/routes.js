@@ -22,7 +22,7 @@ var files = [
 ];
 
 // UNIT TEST
-/*
+
 describe('GET /dfdslk (wrong path)', function () {
 	it('should return an error', function (done) {
 		request(url).get('/dfdslk').expect('Content-Type', /json/)
@@ -33,12 +33,11 @@ describe('GET /dfdslk (wrong path)', function () {
 			});
 	});
 });
-*/
 
-describe('Users API', function () {
-	describe('POST /users/add - Add a new user', function () {
+describe('Site API - Create the user', function () {
+	describe('POST /site/users/add - Add a new user', function () {
 		it('should return a confirmation', function (done) {
-			request(url).post('/users/add').send(testUser)
+			request(url).post('/site/users/add').send(testUser)
 				.expect('Content-Type', /json/).expect(200).end(
 				function (err, res) {
 					var result = JSON.parse(res.text);
@@ -47,7 +46,9 @@ describe('Users API', function () {
 				});
 		});
 	});
-	
+});
+
+describe('Users API', function () {
 	describe('GET /users/list - Get the list of all users', function () {
 		it('should return a list of users', function (done) {
 			request(url).get('/users/list').expect('Content-Type', /json/)
@@ -58,7 +59,6 @@ describe('Users API', function () {
 				});
 		});
 	});
-	
 	describe('GET /users/' + testUser.publicKey + ' - Get a specific user', function () {
 		it('should return the user', function (done) {
 			request(url).get('/users/' + testUser.publicKey).expect('Content-Type', /json/)
@@ -69,10 +69,9 @@ describe('Users API', function () {
 				});
 		});
 	});
-	
-	describe('DELETE /users/' + testUser.publicKey + ' - Delete an user', function () {
-		it('should return a confirmation', function (done) {
-			request(url).delete('/users/' + testUser.publicKey)
+	describe('POST /users/' + testUser.publicKey + '/files/add - Upload a file', function () {
+		it('should return a detailed list of uploaded files', function (done) {
+			request(url).post('/users/' + testUser.publicKey + '/files/add').attach('file', files[0])
 				.expect('Content-Type', /json/).expect(200).end(
 				function (err, res) {
 					var result = JSON.parse(res.text);
@@ -117,9 +116,12 @@ describe('Files API', function () {
 		});
 	});
 	*/
-	describe('POST /files/add/' + testUser.publicKey + ' - Upload a file', function () {
-		it('should return a detailed list of uploaded files', function (done) {
-			request(url).post('/files/add/' + testUser.publicKey).attach('file', files[0])
+});
+
+describe('Site API - Delete the user', function () {
+	describe('DELETE /site/users/' + testUser.publicKey + ' - Delete an user', function () {
+		it('should return a confirmation', function (done) {
+			request(url).delete('/site/users/' + testUser.publicKey)
 				.expect('Content-Type', /json/).expect(200).end(
 				function (err, res) {
 					var result = JSON.parse(res.text);
