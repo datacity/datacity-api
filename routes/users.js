@@ -34,6 +34,7 @@ router.get('/list', function(req, res) {
 		});
 	}, function (err) {
 		console.trace(err.message);
+		return (next(err));
 	});
 });
 
