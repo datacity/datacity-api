@@ -42,23 +42,15 @@ router.delete('/users/:publicKey', function(req, res) {
     var db = req.db;
 	var publicKey = req.params.publicKey;
 
-	db.deleteByQuery({
+	db.delete({
 		index: 'users',
 		type: 'user',
-		q: 'publicKey: "' + publicKey + '"'
+		id: publicKey
 	}).then(function (resp) {
-		var shards = resp["_indices"].users["_shards"];
-		if (shards.failed == 0) {
-			res.json(200, {
-				status: "success",
-				data: "user deleted"
-			});
-		} else {
-			res.json(200, {
-				status: "error",
-				message: "successful: " + shards.successful + ", failed: " + shards.failed + ", total: " + shards.total
-			});
-		}
+		res.json(200, {
+			status: "success",
+			data: "user deleted"
+		});
 	}, function (err) {
 		console.trace(err.message);
 		return (next(err));
