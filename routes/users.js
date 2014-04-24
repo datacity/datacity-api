@@ -120,9 +120,10 @@ router.get('/:publicKey/files/list', function(req, res) {
 		}
 	}).then(function (resp) {
 		var list = [];
-		for (var file in resp.hits.hits) {
-			list.push(resp.hits.hits[file]["_source"]);
+		for (var i = 0; i < resp.hits.total; i++) {
+			list.push(resp.hits.hits[i]["_source"]);
 		}
+		console.log(list);
 		res.json(200, {
 			status: "success",
 			data: list
