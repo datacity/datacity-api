@@ -5,7 +5,8 @@ var formidable = require('formidable');
 var chardet = require('chardet');
 var genericParser = require('genericparser');
 var middleware = require('./middleware');
-
+var events = require('events');
+var eventEmitter = new events.EventEmitter();
 var uploadDir = "./uploads/";
 
 /*
@@ -137,7 +138,7 @@ router.get('/:publicKey/files/list', function(req, res) {
 /*
  * GET parse the file with geenericparser
  */
-router.get('/:publicKey/files/:path/parse', function(req, res, next) {
+/*router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 	var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
@@ -159,8 +160,57 @@ router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 				data: result
 			});
 	});
-});
+});*/
+router.get('/:publicKey/files/:path/parse', function(req, res, next) {
+    var path = req.params.path;
+    var db = req.db;
+	var dirName = uploadDir + path;
 
+	db.search({
+		index: 'files',
+		type: 'file',
+		q: 'path: "' + path + '"'
+	}).then(function (resp) {
+            if (resp.hits.hits.length === 0) {
+				res.json(200, {
+					status: "error",
+					message: "unable to find the file in the database"
+				});
+				return;
+			}
+			var name = resp.hits.hits[0]["_source"]["name"];
+			var typeTab = name.split('.');
+			var type = typeTab[typeTab.length - 1].toLowerCase();
+			var parser = genericParser(type);
+			if (!parser) {
+				res.json(200, {
+					status: "error",
+					message: "the file [" + name + "] can't be parsed. Incompatible file type."
+				});
+				return;
+			}
+			parser.on("error", function (error) {
+				res.json(200, {
+					status: "error",
+					message: "from: " + req.url + " : " + error.message
+				});
+			});
+
+			parser.parse(dirName, false, function (result, index) {
+				if (result)
+					res.json(200, {
+						status: "success",
+						data: result,
+						message: "from: " + req.url + ": file parsed successfully!"
+					});
+			});
+		}, function (err) {
+			res.json(200, {
+				status: "error",
+				message: err.message
+			});
+		});
+});
 
 /*
  * delete a file of an user
@@ -191,8 +241,141 @@ router.delete('/:publicKey/files/:path', function(req, res, next) {
 });
 
 
+/* PARTIE SOURCES */
 
+function arrayObjectIndexOf(myArray, property) {
+	if (!(myArray instanceof Array))
+        return -1
+    for (var i = 0, len = myArray.length; i < len; i++) {
+		if (myArray[i][property]) return i;
+	}
+	return -1;
+}
 
+function formatArray(myArray, property) {
+	for (var i = 0, len = myArray.length; i < len; i++) {
+		for (var proper in myArray[i]) {
+			myArray[i][proper] = myArray[i][proper].toLowerCase();
+		}
+	}
+}
 
+var generateProperJSON = function (file, databinding, id, sourceName) {
+    if (databinding.length <= 0)
+        return false;
+	//formatArray(databiding);
+	if (file instanceof Array) {
+		for (var i in file) {
+			var currentObject = file[i];
+			var jsonObj = {};
+			for (var key in currentObject) {
+				var indexObject = arrayObjectIndexOf(databinding, key);
+				if (indexObject != -1)
+					jsonObj[databinding[indexObject][key]] = currentObject[key];
+			}
+			jsonObj['sourceName'] = sourceName;
+
+			//TODO: LIMITER LA BULK REQUEST A 1000
+			eventEmitter.emit('line', jsonObj);
+		}
+		eventEmitter.emit('end');
+	}
+	return true;
+}
+
+var storeSourceOnElasticSearch = function (req, res, type) {
+	var bodyArray = [];
+	var db = req.db;
+	eventEmitter.on('line', function (line) {
+		bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
+	});
+	eventEmitter.on('end', function () {
+		db.bulk({
+			body: bodyArray,
+			refresh: true
+		}, function (err, resp, status) {
+				res.json(status, {
+					status: "success",
+					message: "from: " + req.url + ": You uploaded your source with success!"
+				});
+			});
+	});
+}
+
+function renameProperty(obj, oldName, newName) {
+	if (obj.hasOwnProperty(oldName)) {
+		obj[newName] = obj[oldName];
+		delete obj[oldName];
+	}
+	return obj;
+};
+
+router.post('/:publicKey/source/:category/:name/upload', function(req, res, next) {
+    console.log("voila le body");
+    console.log(req.body);
+	if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
+		res.json(200, {
+			status: "error",
+			message: "from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding"
+		});
+		return;
+	}
+	storeSourceOnElasticSearch(req, res, req.params.category);
+	if (generateProperJSON(req.body.jsonData, req.body.databiding, req.params.publicKey, req.params.name) === false) {
+        res.json(200, {
+            status: "error",
+            message: "from" + req.url + ": No columns selected"
+        });
+	}
+});
+
+router.get('/:publicKey/source/:name/download', function(req, res, next) {
+	if (!req.params.name) {
+        var db = req.db;
+		res.json(200, {
+			status: "error",
+			message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
+		});
+		return;
+	}
+	var sourceName = 'sourceName:' + req.params.name;
+	db.search({
+		index: 'sources',
+		size: '1000',
+		q: sourceName
+	}, function (error, response, status) {
+			res.json(status, {
+				status: "success",
+				data: response.hits.hits,
+				message: "from: " + req.url + ": Source downloaded!"
+			});
+		});
+});
+
+router.get('/:publicKey/source/:category/model', function(req, res, next) {
+	var db = req.db;
+	db.indices.getMapping({
+		index: 'sources'
+	}, function (error, response, status) {
+			var category = req.params.category;
+			//console.log(response.sources[category]);
+
+			if (!category || !response || !response.sources
+				|| !response.sources.mappings || !response.sources.mappings[category]
+				|| !response.sources.mappings[category].properties) {
+				res.json(200, {
+					status: "error",
+					message: "from: " + req.url + ": No mapping available. Maybe it's because there is no source uploaded in elasticsearch ?"
+				});
+				return;
+			}
+			var categoryMapping = Object.keys(response.sources[category].properties);
+			res.json(200, {
+				status: "success",
+				data: categoryMapping,
+				message: "from: " + req.url + ": Mapping sended"
+			});
+		});
+});
 
 module.exports = router;
