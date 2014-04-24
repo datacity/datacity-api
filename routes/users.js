@@ -136,15 +136,16 @@ router.get('/:publicKey/files/list', function(req, res) {
 /*
  * GET parse the file with geenericparser
  */
-/*router.get('/:publicKey/files/:path/parse', function(req, res, next) {
+router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 	var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
 	
-	var name = req.file.name;
-	var typeTab = name.split('.');
-	var type = typeTab[typeTab.length - 1].toLowerCase();
-	var parser = genericParser(type);
+	var ext = req.file.name.split('.').pop().toLowerCase();
+	if (ext.length == 0) {
+		return next(new Error('Unable to get the file extension'));
+	}
+	var parser = genericParser(ext);
 	if (!parser) {
 		return next(new Error("the file [" + name + "] can't be parsed. Incompatible file type."));
 	}
@@ -158,56 +159,6 @@ router.get('/:publicKey/files/list', function(req, res) {
 				data: result
 			});
 	});
-});*/
-router.get('/:publicKey/files/:path/parse', function(req, res, next) {
-    var path = req.params.path;
-    var db = req.db;
-	var dirName = uploadDir + path;
-
-	db.search({
-		index: 'files',
-		type: 'file',
-		q: 'path: "' + path + '"'
-	}).then(function (resp) {
-            if (resp.hits.hits.length === 0) {
-				res.json(200, {
-					status: "error",
-					message: "unable to find the file in the database"
-				});
-				return;
-			}
-			var name = resp.hits.hits[0]["_source"]["name"];
-			var typeTab = name.split('.');
-			var type = typeTab[typeTab.length - 1].toLowerCase();
-			var parser = genericParser(type);
-			if (!parser) {
-				res.json(200, {
-					status: "error",
-					message: "the file [" + name + "] can't be parsed. Incompatible file type."
-				});
-				return;
-			}
-			parser.on("error", function (error) {
-				res.json(200, {
-					status: "error",
-					message: "from: " + req.url + " : " + error.message
-				});
-			});
-
-			parser.parse(dirName, false, function (result, index) {
-				if (result)
-					res.json(200, {
-						status: "success",
-						data: result,
-						message: "from: " + req.url + ": file parsed successfully!"
-					});
-			});
-		}, function (err) {
-			res.json(200, {
-				status: "error",
-				message: err.message
-			});
-		});
 });
 
 /*
