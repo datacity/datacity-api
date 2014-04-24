@@ -107,18 +107,18 @@ describe('Files API', function () {
 				});
 		});
 	});
-	/*
-	describe('GET /user/' + testUser.publicKey + '/files (but no files)', function () {
+	
+	describe('GET /users/' + testUser.publicKey + '/files/list', function () {
 		it('should return a list of files of the user', function (done) {
-			request(url).get('/user/' + testUser.publicKey + '/files').expect('Content-Type', /json/)
+			request(url).get('/users/' + testUser.publicKey + '/files/list').expect('Content-Type', /json/)
 				.expect(200).end(function (err, res) {
 					var result = JSON.parse(res.text);
-					assert.equal(result.status, "error");
+					assert.equal(result.status, "success");
 					done();
 				});
 		});
 	});
-	*/
+	
 });
 
 /*

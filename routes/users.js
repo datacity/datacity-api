@@ -108,7 +108,6 @@ router.post('/:publicKey/files/add', function(req, res) {
 router.get('/:publicKey/files/list', function(req, res) {
     var db = req.db;
 	var publicKey = req.params.publicKey;
-
 	db.search({
 		index: 'files',
 		type: 'file',
@@ -121,10 +120,9 @@ router.get('/:publicKey/files/list', function(req, res) {
 		}
 	}).then(function (resp) {
 		var list = [];
-		for (var i = 0; i < resp.hits.total; i++) {
-			list.push(resp.hits.hits[i]["_source"]);
+		for (var file in resp.hits.hits) {
+			list.push(resp.hits.hits[file]["_source"]);
 		}
-		console.log(list);
 		res.json(200, {
 			status: "success",
 			data: list
