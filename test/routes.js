@@ -19,6 +19,7 @@ var filesDir = "test/";
 var files = [
 	filesDir + "JSON_TelephonePublic.json",
 	filesDir + "JSON_Zoo.json",
+	filesDir + "OSM_MTP_Pharmacie.csv"
 ];
 
 // UNIT TEST
@@ -71,7 +72,7 @@ describe('Users API', function () {
 	});
 	describe('POST /users/' + testUser.publicKey + '/files/add - Upload a file', function () {
 		it('should return a detailed list of uploaded files', function (done) {
-			request(url).post('/users/' + testUser.publicKey + '/files/add').attach('file', files[0])
+			request(url).post('/users/' + testUser.publicKey + '/files/add').attach('file', files[0]).attach('file', files[2])
 				.expect('Content-Type', /json/).expect(200).end(
 				function (err, res) {
 					var result = JSON.parse(res.text);

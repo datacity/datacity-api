@@ -38,7 +38,7 @@ router.post('/users/add', function(req, res, next) {
 /*
  * delete an user
  */
-router.delete('/users/:publicKey', function(req, res) {
+router.delete('/users/:publicKey', function(req, res, next) {
     var db = req.db;
 	var publicKey = req.params.publicKey;
 
