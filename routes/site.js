@@ -1,35 +1,38 @@
 ﻿var express = require('express');
 var router = express.Router();
+var middleware = require('./middleware');
 
 /*
  * POST to adduser.
  */
-router.post('/users/add', function(req, res) {
+router.post('/users/add', function(req, res, next) {
 	var db = req.db;
 	var body = req.body;
 
 	db.create({
-		index: 'users',
-		type: 'user',
-		body: {
-			publicKey: body.publicKey,
-			privateKey: body.privateKey,
-			creation: new Date(),
-			quota: {
-				limit: body.quota,
-				expiration: new Date(),
-				counter: 0
-			},
-			username: body.username
-		}
-	}).then(function (resp) {
-		res.json(200, {
-			status: "success",
-			data: "User created"
+			index: 'users',
+			type: 'user',
+			id: body.publicKey,
+			body: {
+				publicKey: body.publicKey,
+				privateKey: body.privateKey,
+				creation: new Date(),
+				quota: {
+					limit: body.quota,
+					expiration: new Date(),
+					counter: 0
+				},
+				username: body.username
+			}
+		}).then(function (resp) {
+			res.json(200, {
+				status: "success",
+				data: "User created"
+			});
+		}, function (err) {
+			console.trace(err.message);
+			return (next(err));
 		});
-	}, function (err) {
-		console.trace(err.message);
-	});
 });
 
 /*
@@ -58,6 +61,7 @@ router.delete('/users/:publicKey', function(req, res) {
 		}
 	}, function (err) {
 		console.trace(err.message);
+		return (next(err));
 	});
 });
 
