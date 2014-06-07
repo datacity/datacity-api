@@ -27,8 +27,8 @@ router.get('/list', function(req, res) {
 		type: 'user'
 	}).then(function (resp) {
 		var list = [];
-		for (var user in resp.hits.hits) {
-			list.push(resp.hits.hits[user]["_source"]);
+		for (var i = 0; i< resp.hits.total; i++) {
+			list.push(resp.hits.hits[i]["_source"]);
 		}
 		res.json(200, {
 			status: "success",
@@ -71,6 +71,7 @@ router.post('/:publicKey/files/add', function(req, res) {
 			encoding: chardet.detectFileSync(fileForm.path),
 			publicKey: publicKey
 		};
+		console.log(file);
 		db.create({
 			index: 'files',
 			type: 'file',
@@ -120,8 +121,8 @@ router.get('/:publicKey/files/list', function(req, res) {
 		}
 	}).then(function (resp) {
 		var list = [];
-		for (var file in resp.hits.hits) {
-			list.push(resp.hits.hits[file]["_source"]);
+		for (var i = 0; i < resp.hits.total; i++) {
+			list.push(resp.hits.hits[i]["_source"]);
 		}
 		res.json(200, {
 			status: "success",
@@ -260,8 +261,6 @@ function renameProperty(obj, oldName, newName) {
 };
 
 router.post('/:publicKey/source/:category/:name/upload', function(req, res, next) {
-    console.log("voila le body");
-    console.log(req.body);
 	if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
 		res.json(200, {
 			status: "error",
@@ -279,8 +278,8 @@ router.post('/:publicKey/source/:category/:name/upload', function(req, res, next
 });
 
 router.get('/:publicKey/source/:name/download', function(req, res, next) {
+    var db = req.db;
 	if (!req.params.name) {
-        var db = req.db;
 		res.json(200, {
 			status: "error",
 			message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
@@ -307,7 +306,7 @@ router.get('/:publicKey/source/:category/model', function(req, res, next) {
 		index: 'sources'
 	}, function (error, response, status) {
 			var category = req.params.category;
-			//console.log(response.sources[category]);
+			
 
 			if (!category || !response || !response.sources
 				|| !response.sources.mappings || !response.sources.mappings[category]

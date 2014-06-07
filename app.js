@@ -9,8 +9,8 @@ var elasticsearch = require('elasticsearch');
  * Elasticsearch database
  */
 var db = new elasticsearch.Client({
-	host: 'localhost:9200',
-	log: 'trace'
+	host: 'localhost:9200'/*,
+	log: 'trace'*/
 });
 
 var routes = require('./routes/index');
