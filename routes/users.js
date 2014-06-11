@@ -54,7 +54,8 @@ router.get('/:publicKey', function(req, res) {
 /*
  * POST add new files
  */
-router.post('/:publicKey/files/add', function(req, res) {
+router.post('/:publicKey/files/add', function (req, res) {
+	if (!req.user) return;
 	var db = req.db;
 	var publicKey = req.params.publicKey;
 	var form = new formidable.IncomingForm();
@@ -71,7 +72,6 @@ router.post('/:publicKey/files/add', function(req, res) {
 			encoding: chardet.detectFileSync(fileForm.path),
 			publicKey: publicKey
 		};
-		console.log(file);
 		db.create({
 			index: 'files',
 			type: 'file',
@@ -106,7 +106,8 @@ router.post('/:publicKey/files/add', function(req, res) {
 /*
  * GET the list of files of the user
  */
-router.get('/:publicKey/files/list', function(req, res) {
+router.get('/:publicKey/files/list', function (req, res) {
+	if (!req.user) return;
     var db = req.db;
 	var publicKey = req.params.publicKey;
 	db.search({
@@ -137,7 +138,8 @@ router.get('/:publicKey/files/list', function(req, res) {
 /*
  * GET parse the file with geenericparser
  */
-router.get('/:publicKey/files/:path/parse', function(req, res, next) {
+router.get('/:publicKey/files/:path/parse', function (req, res, next) {
+	if (!req.user) return;
 	var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
@@ -165,7 +167,8 @@ router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 /*
  * delete a file of an user
  */
-router.delete('/:publicKey/files/:path', function(req, res, next) {
+router.delete('/:publicKey/files/:path', function (req, res, next) {
+	if (!req.user) return;
     var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
