@@ -59,11 +59,11 @@ var middlewareUser = function(req, res, next, publicKey){
 				}
 			}
 		});
+		*/
 		next();
 	}, function (err) {
 		return next(err);
 	});
-	*/
 };
 
 /*
