@@ -6,7 +6,8 @@ var middlewareUser = function(req, res, next, publicKey){
 	db.search({
 		index: 'users',
 		type: 'user',
-		q: '_id:' + publicKey
+		// q: '_id:' + publicKey
+		id: publicKey
 	}).then(function (resp) {
 		console.dir(resp.hits.hits);
 		if (resp.hits.hits.length == 0) {
