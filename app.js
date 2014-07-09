@@ -17,6 +17,10 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var files = require('./routes/files');
 var site = require('./routes/site');
+var getRawBody = require('raw-body');
+var typer      = require('media-typer');
+
+
 //var sources = require('./routes/sources');
 
 
@@ -30,8 +34,8 @@ app.set('view engine', 'jade');
 
 app.use(favicon());
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb'}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*
@@ -46,10 +50,10 @@ app.use(function(req, res, next){
  * Allow cross origin
  */
 app.use(function(req, res, next){
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-	res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
+	res.header("Access-Control-Allow-Credentials", "true");
+	res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
 	// intercept OPTIONS method
 	if ('OPTIONS' == req.method) {
 		res.send(200);
@@ -57,6 +61,7 @@ app.use(function(req, res, next){
 		next();
 	}
 });
+
 
 /*
  * Routes

@@ -3,7 +3,7 @@ var router = express.Router();
 var fs = require('fs');
 var formidable = require('formidable');
 var chardet = require('chardet');
-var genericParser = require('genericparser');
+var genericParser = require('datacity-parser');
 var middleware = require('./middleware');
 
 /*

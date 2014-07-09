@@ -3,7 +3,7 @@ var router = express.Router();
 var fs = require('fs');
 var formidable = require('formidable');
 var chardet = require('chardet');
-var genericParser = require('genericparser');
+var genericParser = require('datacity-parser');
 var middleware = require('./middleware');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
@@ -14,7 +14,6 @@ var uploadDir = "./uploads/";
  */
 router.param('publicKey', middleware.publicKey);
 router.param('path', middleware.path);
-
 
 /*
  * GET userlist.
@@ -54,7 +53,8 @@ router.get('/:publicKey', function(req, res) {
 /*
  * POST add new files
  */
-router.post('/:publicKey/files/add', function(req, res) {
+router.post('/:publicKey/files/add', function (req, res) {
+	if (!req.user) return;
 	var db = req.db;
 	var publicKey = req.params.publicKey;
 	var form = new formidable.IncomingForm();
@@ -71,11 +71,11 @@ router.post('/:publicKey/files/add', function(req, res) {
 			encoding: chardet.detectFileSync(fileForm.path),
 			publicKey: publicKey
 		};
-		console.log(file);
 		db.create({
 			index: 'files',
 			type: 'file',
-			body: file
+			body: file,
+			refresh: true,
 		}).then(function (resp) {
 				
 			}, function (err) {
@@ -106,12 +106,15 @@ router.post('/:publicKey/files/add', function(req, res) {
 /*
  * GET the list of files of the user
  */
-router.get('/:publicKey/files/list', function(req, res) {
+router.get('/:publicKey/files/list', function (req, res) {
+	if (!req.user) return;
     var db = req.db;
 	var publicKey = req.params.publicKey;
 	db.search({
 		index: 'files',
 		type: 'file',
+		refresh: true,
+		size: 100,
 		body: {
 			query: {
 				match: {
@@ -122,22 +125,26 @@ router.get('/:publicKey/files/list', function(req, res) {
 	}).then(function (resp) {
 		var list = [];
 		for (var i = 0; i < resp.hits.total; i++) {
-			list.push(resp.hits.hits[i]["_source"]);
+			if (resp.hits.hits[i] && resp.hits.hits[i]["_source"])
+				list.push(resp.hits.hits[i]["_source"]);
 		}
 		res.json(200, {
 			status: "success",
 			data: list
 		});
 	}, function (err) {
-		console.trace(err.message);
-		return next(err);
+		res.json(200, {
+			status: "error",
+			message: "from: " + req.url + " : " + err.message
+		});
 	});
 });
 
 /*
  * GET parse the file with geenericparser
  */
-router.get('/:publicKey/files/:path/parse', function(req, res, next) {
+router.get('/:publicKey/files/:path/parse', function (req, res, next) {
+	if (!req.user) return;
 	var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
@@ -165,14 +172,15 @@ router.get('/:publicKey/files/:path/parse', function(req, res, next) {
 /*
  * delete a file of an user
  */
-router.delete('/:publicKey/files/:path', function(req, res, next) {
+router.delete('/:publicKey/files/:path', function (req, res, next) {
+	if (!req.user) return;
     var db = req.db;
 	var path = req.params.path;
 	var dirName = uploadDir + path;
 
 	db.deleteByQuery({
-		index: 'users',
-		type: 'user',
+		index: 'files',
+		type: 'file',
 		q: 'path:"' + path + '"'
 	}).then(function (resp) {
 		fs.unlink(dirName, function (err) {
@@ -260,7 +268,7 @@ function renameProperty(obj, oldName, newName) {
 	return obj;
 };
 
-router.post('/:publicKey/source/:category/:name/upload', function(req, res, next) {
+router.post('/:publicKey/source/:category/:name/upload',  function(req, res, next) {
 	if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
 		res.json(200, {
 			status: "error",
@@ -292,6 +300,13 @@ router.get('/:publicKey/source/:name/download', function(req, res, next) {
 		size: '1000',
 		q: sourceName
 	}, function (error, response, status) {
+		if (!response || !response.hits || !response.hits.hits) {
+			res.json(status, {
+				status: "error",
+				message: "from: " + req.url + ": Source not founded!"
+			});			
+		}
+
 			res.json(status, {
 				status: "success",
 				data: response.hits.hits,
@@ -310,7 +325,9 @@ router.get('/:publicKey/source/:category/model', function(req, res, next) {
 
 			if (!category || !response || !response.sources
 				|| !response.sources.mappings || !response.sources.mappings[category]
-				|| !response.sources.mappings[category].properties) {
+				|| !response.sources.mappings[category].properties 
+				|| !response.sources[category] 
+				|| !response.sources[category].properties) {
 				res.json(200, {
 					status: "error",
 					message: "from: " + req.url + ": No mapping available. Maybe it's because there is no source uploaded in elasticsearch ?"

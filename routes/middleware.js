@@ -6,8 +6,10 @@ var middlewareUser = function(req, res, next, publicKey){
 	db.search({
 		index: 'users',
 		type: 'user',
+		// q: '_id:' + publicKey
 		id: publicKey
 	}).then(function (resp) {
+		//console.dir(resp.hits.hits);
 		if (resp.hits.hits.length == 0) {
 			return next(new Error('user not found'));
 		}
@@ -15,6 +17,7 @@ var middlewareUser = function(req, res, next, publicKey){
 			return next(new Error('multiple users found'));
 		}
 		req.user = resp.hits.hits[0]["_source"];
+		/*
 		var currentDate = new Date();
 		var expiration = new Date(req.user.quota.expiration);
 		if (expiration < currentDate) {
@@ -57,6 +60,7 @@ var middlewareUser = function(req, res, next, publicKey){
 				}
 			}
 		});
+		*/
 		next();
 	}, function (err) {
 		return next(err);
@@ -71,6 +75,7 @@ var middlewareFile = function(req, res, next, path){
 	db.search({
 		index: 'files',
 		type: 'file',
+		refresh: true,
 		body: {
 			query: {
 				match: {
