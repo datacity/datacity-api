@@ -223,13 +223,16 @@ var generateProperJSON = function (file, databinding, id, sourceName) {
         return false;
 	//formatArray(databiding);
 	if (file instanceof Array) {
+		// ITERATIONS SUR LE TABLEAU
 		for (var i in file) {
 			var currentObject = file[i];
 			var jsonObj = {};
-			for (var key in currentObject) {
-				var indexObject = arrayObjectIndexOf(databinding, key);
-				if (indexObject != -1)
-					jsonObj[databinding[indexObject][key]] = currentObject[key];
+			// ITERATIONS SUR UN OBJET
+			for (var elem in databinding) {
+				jsonObj[databinding[elem].to] = currentObject[databinding[elem].from];
+				//var indexObject = arrayObjectIndexOf(databinding, key);
+				//if (indexObject != -1)
+				//jsonObj[databinding[indexObject][key]] = currentObject[key];
 			}
 			jsonObj['sourceName'] = sourceName;
 
@@ -268,16 +271,16 @@ function renameProperty(obj, oldName, newName) {
 	return obj;
 };
 
-router.post('/:publicKey/source/:category/:name/upload',  function(req, res, next) {
-	if (!req.body || !req.body.jsonData || !req.body.databiding || !req.params.name) {
+router.post('/:publicKey/dataset/:datasetslug/source/:name/upload',  function(req, res, next) {
+	if (!req.body || !req.body.jsonData || !req.body.databinding || !req.params.name || !req.params.datasetslug) {
 		res.json(200, {
 			status: "error",
 			message: "from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding"
 		});
 		return;
 	}
-	storeSourceOnElasticSearch(req, res, req.params.category);
-	if (generateProperJSON(req.body.jsonData, req.body.databiding, req.params.publicKey, req.params.name) === false) {
+	storeSourceOnElasticSearch(req, res, req.params.datasetslug);
+	if (generateProperJSON(req.body.jsonData, req.body.databinding, req.params.publicKey, req.params.name) === false) {
         res.json(200, {
             status: "error",
             message: "from" + req.url + ": No columns selected"
