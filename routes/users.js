@@ -325,7 +325,7 @@ router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next)
 			});			
 		}
 
-		var content = response.hits.hits.filter(function(el) {
+		var content = response.hits.hits.map(function(el) {
 					return el._source;
 		});
 		res.json(status, {
