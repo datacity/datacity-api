@@ -297,6 +297,20 @@ router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next)
 		});
 		return;
 	}
+
+/*{"status":"success","data":
+[
+{"_index":"sources","_type":"testtest","_id":"xDRLMYqOSFKuZW-pneFTgg","_score":1,"_source":
+	{"code_secteur":"SE","libelle":"Sécurité","sourceName":"vgfdvbgfbgf"}
+},
+{"_index":"sources","_type":"testtest","_id":"rzrMkGabRlqQEOd0Kql2Kg","_score":1,"_source":
+	{"code_secteur":"SE","libelle":"Sécurité","sourceName":"vgfdvbgfbgf"}
+},
+{"_index":"sources","_type":"testtest","_id":"3KnV0IqETQSCDSC170V0Nw","_score":1,"_source":
+	{"code_secteur":"TC","libelle":"Transports en*/
+
+
+
 	var sourceName = 'sourceName:*';
 	db.search({
 		index: 'sources',
@@ -310,12 +324,16 @@ router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next)
 				message: "from: " + req.url + ": Source not founded!"
 			});			
 		}
-			res.json(status, {
-				status: "success",
-				data: response.hits.hits,
-				message: "from: " + req.url + ": Source downloaded!"
-			});
+
+		var content = response.hits.hits.filter(function(el) {
+					return el._source;
 		});
+		res.json(status, {
+			status: "success",
+			data: content,
+			message: "from: " + req.url + ": Source downloaded!"
+		});
+	});
 });
 
 router.get('/:publicKey/source/:category/model', function(req, res, next) {
