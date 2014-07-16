@@ -288,19 +288,20 @@ router.post('/:publicKey/dataset/:datasetslug/source/:name/upload',  function(re
 	}
 });
 
-router.get('/:publicKey/source/:name/download', function(req, res, next) {
+router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next) {
     var db = req.db;
-	if (!req.params.name) {
+	if (!req.params.datasetslug) {
 		res.json(200, {
 			status: "error",
-			message: "from: " + req.url + ": You need to enter a valid category or a valid publickey"
+			message: "from: " + req.url + ": You need to enter a valid datasetslug or a valid publickey"
 		});
 		return;
 	}
-	var sourceName = 'sourceName:' + req.params.name;
+	var sourceName = 'sourceName:*';
 	db.search({
 		index: 'sources',
-		size: '1000',
+		type: req.params.datasetslug,
+		size: '10000',
 		q: sourceName
 	}, function (error, response, status) {
 		if (!response || !response.hits || !response.hits.hits) {
@@ -309,7 +310,6 @@ router.get('/:publicKey/source/:name/download', function(req, res, next) {
 				message: "from: " + req.url + ": Source not founded!"
 			});			
 		}
-
 			res.json(status, {
 				status: "success",
 				data: response.hits.hits,
@@ -325,7 +325,6 @@ router.get('/:publicKey/source/:category/model', function(req, res, next) {
 	}, function (error, response, status) {
 			var category = req.params.category;
 			
-
 			if (!category || !response || !response.sources
 				|| !response.sources.mappings || !response.sources.mappings[category]
 				|| !response.sources.mappings[category].properties 
