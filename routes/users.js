@@ -297,20 +297,6 @@ router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next)
 		});
 		return;
 	}
-
-/*{"status":"success","data":
-[
-{"_index":"sources","_type":"testtest","_id":"xDRLMYqOSFKuZW-pneFTgg","_score":1,"_source":
-	{"code_secteur":"SE","libelle":"Sécurité","sourceName":"vgfdvbgfbgf"}
-},
-{"_index":"sources","_type":"testtest","_id":"rzrMkGabRlqQEOd0Kql2Kg","_score":1,"_source":
-	{"code_secteur":"SE","libelle":"Sécurité","sourceName":"vgfdvbgfbgf"}
-},
-{"_index":"sources","_type":"testtest","_id":"3KnV0IqETQSCDSC170V0Nw","_score":1,"_source":
-	{"code_secteur":"TC","libelle":"Transports en*/
-
-
-
 	var sourceName = 'sourceName:*';
 	db.search({
 		index: 'sources',
@@ -318,11 +304,12 @@ router.get('/:publicKey/dataset/:datasetslug/download', function(req, res, next)
 		size: '10000',
 		q: sourceName
 	}, function (error, response, status) {
-		if (!response || !response.hits || !response.hits.hits) {
-			res.json(status, {
+		if (!response || !response.hits || response.hits === "undefined" || !response.hits.hits || response.hits.hits === "undefined") {
+			res.json(200, {
 				status: "error",
 				message: "from: " + req.url + ": Source not founded!"
-			});			
+			});
+			return false;
 		}
 
 		var content = response.hits.hits.map(function(el) {
