@@ -1,0 +1,11 @@
+{
+  "name": "datacity-api",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/username/repository.git"
+  },
+  "dependencies": {
+    "restify": "2.8.2",
+    "elasticsearch": "2.4.3"
+  }
+}
