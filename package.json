@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "restify": "2.8.2",
-    "elasticsearch": "2.4.3"
+    "elasticsearch": "2.4.3",
+    "genericparser": "git+https://e2714174376379b075d04da9db65b94255a8d5e2:x-oauth-basic@github.com/palmsnipe/datacity-parser.git"
   }
 }
