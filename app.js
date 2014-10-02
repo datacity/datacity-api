@@ -13,6 +13,6 @@ var server = restify.createServer({
 server.get('/test/:name', respondTest);
 server.head('/test', respondTest);
 
-server.listen(8082, function() {
+server.listen(4567, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
