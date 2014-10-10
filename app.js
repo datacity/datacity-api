@@ -1,5 +1,15 @@
 var restify = require('restify');
 var parse = require('./routes/parse');
+var middleware = require('./routes/middleware');
+var elasticsearch = require('elasticsearch');
+
+/*
+ * Elasticsearch database
+ */
+var db = new elasticsearch.Client({
+    host: 'localhost:9200'/*,
+     log: 'trace'*/
+});
 
 function respondTest(req, res, next) {
   res.send('hello ' + req.params.name);
@@ -31,7 +41,7 @@ server.use(restify.CORS({'origins': ['*']}));
   .use(restify.fullResponse())
   .use(restify.bodyParser());
 */
-server.post('/:publicKey/parse', parse);
+server.post('/:publicKey/parse', middleware.publicKey, parse);
 
 server.listen(4567, function() {
   console.log('%s listening at %s', server.name, server.url);
