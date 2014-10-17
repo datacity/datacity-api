@@ -1,7 +1,7 @@
 var middlewareUser = function (req, res, next, publicKey) {
     console.log('starting middleware');
     var db = req.db;
-
+    console.log('REQ DONE');
     db.search({
         index: 'users',
         type: 'user',

@@ -9,7 +9,7 @@ var elasticsearch = require('elasticsearch');
 var db = new elasticsearch.Client({
     host: 'localhost:9200'/*,
      log: 'trace'*/
-});
+}, console.log("Salut les gens je suis elasticsearch !"));
 
 function respondTest(req, res, next) {
   res.send('hello ' + req.params.name);
