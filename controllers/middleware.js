@@ -1,8 +1,23 @@
-var middlewareUser = function (req, res, next, publicKey) {
+module.exports = function middlewareUser(req, res, next, publicKey) {
     console.log('starting middleware');
-    var db = req.db;
+
+    //console.log(req.client);
+
+    client.ping({
+        // ping usually has a 100ms timeout
+        requestTimeout: 1000,
+
+        // undocumented params are appended to the query string
+        hello: "elasticsearch!"
+    }, function (error) {
+        if (error) {
+            console.trace('elasticsearch cluster is down!');
+        } else {
+            console.log('All is well');
+        }
+    });
     console.log('REQ DONE');
-    db.search({
+    client.search({
         index: 'users',
         type: 'user',
         // q: '_id:' + publicKey
