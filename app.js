@@ -15,13 +15,13 @@ var server = restify.createServer({
 });
 
 // Create the respectify instance with the new server
-var respect = new Respectify(server);
+//var respect = new Respectify(server);
 
 require('./config/routes')(server, db);
 
 //Allow cross origin
 server.use(restify.CORS({'origins': ['*']}));
-server.use(respect.middleware);
+//server.use(respect.middleware);
 
 server.listen(4567, function() {
   console.log('%s listening at %s', server.name, server.url);

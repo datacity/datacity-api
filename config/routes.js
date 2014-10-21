@@ -1,18 +1,25 @@
-var upload = require("../controllers/files");
+var parser = require("../controllers/parse");
 
 module.exports = function(server, db) {
-    //POST - Upload
-    server.get({
-        path: '/things/:id'
+    //POST - Parse (uploading sources)
+    server.post({
+        path: '/:publicKey/parse'
         , version: '1.0.0'
         , params: {
-            id: 'number'
+            publicKey: 'number'
         }
     }, function(req, res) {
-        upload.index(db, function(err, data) {
+        parser(req, res, function(err, data) {
             if (err)
-                console.log("An error occured for GET");
-            res.send(data);
+                console.log("! Parse error !");
+            else if (data != undefined) {
+                console.log("Parse success. Responding...");
+                res.json(200, {
+                     status: "success",
+                     data: data,
+                    });
+                console.log("Response sent !");
+            }
         });
     });
 };
