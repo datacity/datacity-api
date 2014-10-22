@@ -6,7 +6,10 @@
   },
   "dependencies": {
     "restify": "2.8.2",
+    "respectify": "1.0.8",
     "elasticsearch": "2.4.3",
+    "formidable": "1.0.15",
+    "chardet": "0.0.8",
     "genericparser": "git+https://e2714174376379b075d04da9db65b94255a8d5e2:x-oauth-basic@github.com/palmsnipe/datacity-parser.git"
   }
 }
