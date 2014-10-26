@@ -26,7 +26,7 @@ module.exports = function(server, db) {
 
     //POST - Upload (uploading sources)
     server.post({
-        path: '/:publickey/upload'
+        path: '/:publickey/upload/'
         , version: '1.0.0'
         , params: {
             publickey: 'number'
