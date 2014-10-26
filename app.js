@@ -15,6 +15,9 @@ var server = restify.createServer({
 	version: "0.0.1"
 });
 
+//Allow cross origin
+server.use(restify.CORS({'origins': ['*']}));
+
 server.use(function(req, res, next) {
     console.log("middleware server use");
     middleware(server, db);
@@ -24,8 +27,8 @@ server.use(function(req, res, next) {
 // Create the respectify instance with the new server
 var respect = new Respectify(server);
 
-//Allow cross origin
-server.use(restify.CORS({'origins': ['*']}));
+server.use(respect.middleware());
+
 
 require('./config/routes')(server, db);
 
