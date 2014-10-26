@@ -16,7 +16,7 @@ module.exports = function(server, db) {
                 console.log("Parse success. Responding...");
                 res.json(200, {
                      status: "success",
-                     data: data,
+                     data: data
                     });
                 console.log("Response sent !");
             }

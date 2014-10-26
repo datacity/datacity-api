@@ -4,9 +4,9 @@ var genericParser		=	require("genericparser");
 var chardet				=	require("chardet");
 var fs 					=	require('fs');
 
+var upload = function (req, res, next) {
+    console.log("Requested upload route");
+    return next();
+}
 
-exports.index = function(db, callback){
-    console.log("INDEX START");
-
-    callback(null, "OK");
-};
+module.exports = upload;
