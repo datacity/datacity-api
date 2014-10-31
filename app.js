@@ -1,33 +1,36 @@
+/**
+ * Imports
+ */
 var restify = require('restify');
 var Respectify = require('respectify');
-var elasticsearch = require('./config/elasticsearch');
-var mariadb = require('./config/mariadb');
-var middleware = require('./config/middleware');
+var Elasticsearch = require('./config/elasticsearch');
+var Mariadb = require('./config/mariadb');
+var Middleware = require('./config/middleware');
 
-// Maria database
-var mariaClient = new mariadb();
+/**
+ * Inits
+ */
+var mariaClient = new Mariadb();
+var elasticClient = new Elasticsearch();
+var server = restify.createServer({
+    name: 'DataCity-API',
+    version: "0.0.1"
+});
+var middleware = new Middleware(server, mariaClient);
+
 mariaClient.connect();
-
-//ElasticSearch database
-var elasticClient = new elasticsearch();
 elasticClient.connect();
 
-//Init du server restify
-var server = restify.createServer({
-	name: 'DataCity-API',
-	version: "0.0.1"
-});
-
-//Allow cross origin
+/**
+ * Server Use functions
+ */
 server.use(restify.CORS({'origins': ['*']}));
-
-//Middleware server use
 server.use(function(req, res, next) {
-    middleware(server, elasticClient);
+    middleware.authenticate(req, res);
     next();
 });
 
-// Create the respectify instance with the new server
+//Initialisation de respectify
 var respect = new Respectify(server);
 
 //Verification des appels aux routes selon les regles definies

@@ -2,6 +2,7 @@ var Client = require('mariasql');
 
 /**
  * Classe de connexion a la base de donnée MariaDB
+ * @constructor
  */
 function Mariadb() {
 
