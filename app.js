@@ -1,10 +1,17 @@
 var restify = require('restify');
 var Respectify = require('respectify');
+var inspect = require('util').inspect;
 var elasticsearch = require('elasticsearch');
+var mariadb = require('./config/mariadb');
 var middleware = require('./config/middleware');
 
+// Maria database
+var mariaClient = new mariadb();
+mariaClient.connect();
+
+
 // Elasticsearch database
-var db = new elasticsearch.Client({
+var elasticDB = new elasticsearch.Client({
     host: 'localhost:9200'/*,
      log: 'trace'*/
 });
@@ -20,7 +27,7 @@ server.use(restify.CORS({'origins': ['*']}));
 
 server.use(function(req, res, next) {
     console.log("middleware server use");
-    middleware(server, db);
+    middleware(server, elasticDB);
     next();
 });
 
@@ -30,7 +37,7 @@ var respect = new Respectify(server);
 server.use(respect.middleware());
 
 
-require('./config/routes')(server, db);
+require('./config/routes')(server, elasticDB);
 
 server.listen(4567, function() {
   console.log('%s listening at %s', server.name, server.url);
