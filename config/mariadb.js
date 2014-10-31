@@ -5,24 +5,24 @@ var Client = require('mariasql');
  */
 function Mariadb() {
 
-    this.host = '127.0.0.1';
-    this.username = 'datacity';
-    this.password = 'datacity';
-    this.client = null;
+    this._host = '127.0.0.1';
+    this._username = 'datacity';
+    this._password = 'datacity';
+    this._client = null;
 }
 
 /**
  * Instanciate client and connect to mariadb
  */
 Mariadb.prototype.connect = function() {
-    this.client = new Client();
-    this.client.connect({
-        host: this.host,
-        user: this.username,
-        password: this.password
+    this._client = new Client();
+    this._client.connect({
+        host: this._host,
+        user: this._username,
+        password: this._password
     });
 
-    this.client.on('connect', function() {
+    this._client.on('connect', function() {
         console.log('Maria Client connected');
     })
         .on('error', function(err) {
@@ -40,8 +40,8 @@ Mariadb.prototype.connect = function() {
  * Closes the connection once all queries in the queue have been executed.
  */
 Mariadb.prototype.end = function() {
-  if (this.client != null) {
-      this.client.end();
+  if (this._client != null) {
+      this._client.end();
   }
 };
 

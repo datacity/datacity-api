@@ -1,7 +1,6 @@
 var restify = require('restify');
 var Respectify = require('respectify');
-var inspect = require('util').inspect;
-var elasticsearch = require('elasticsearch');
+var elasticsearch = require('./config/elasticsearch');
 var mariadb = require('./config/mariadb');
 var middleware = require('./config/middleware');
 
@@ -9,12 +8,9 @@ var middleware = require('./config/middleware');
 var mariaClient = new mariadb();
 mariaClient.connect();
 
-
-// Elasticsearch database
-var elasticDB = new elasticsearch.Client({
-    host: 'localhost:9200'/*,
-     log: 'trace'*/
-});
+//ElasticSearch database
+var elasticClient = new elasticsearch();
+elasticClient.connect();
 
 //Init du server restify
 var server = restify.createServer({
@@ -25,19 +21,20 @@ var server = restify.createServer({
 //Allow cross origin
 server.use(restify.CORS({'origins': ['*']}));
 
+//Middleware server use
 server.use(function(req, res, next) {
-    console.log("middleware server use");
-    middleware(server, elasticDB);
+    middleware(server, elasticClient);
     next();
 });
 
 // Create the respectify instance with the new server
 var respect = new Respectify(server);
 
+//Verification des appels aux routes selon les regles definies
 server.use(respect.middleware());
 
-
-require('./config/routes')(server, elasticDB);
+//Definition des routes
+require('./config/routes')(server, elasticClient);
 
 server.listen(4567, function() {
   console.log('%s listening at %s', server.name, server.url);
