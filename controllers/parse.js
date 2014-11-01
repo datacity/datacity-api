@@ -5,7 +5,7 @@ var chardet				=	require("chardet");
 var fs 					=	require('fs');
 
 var parse = function (req, res, next) {
-	console.log("Requested PARSE...");
+	console.log("Requested PARSE with PUBLIC key = " + req.headers.public_key);
 	var form = new formidable.IncomingForm();
 	var file;
  	form.on('file', function (field, fileForm) {

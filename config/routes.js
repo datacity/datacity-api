@@ -4,10 +4,10 @@ var upload = require("../controllers/upload");
 module.exports = function(server, db) {
     //POST - Parse (uploading sources)
     server.post({
-        path: '/:publicKey/parse'
+        path: '/parse'
         , version: '1.0.0'
         , params: {
-            publicKey: 'number'
+            public_key: 'number'
         }
     }, function(req, res) {
         parser(req, res, function(err, data) {
@@ -26,10 +26,10 @@ module.exports = function(server, db) {
 
     //POST - Upload (uploading sources)
     server.post({
-        path: '/:publickey/upload/'
+        path: '/upload'
         , version: '1.0.0'
         , params: {
-            publickey: 'number'
+            public_key: 'number'
         }
     }, function(req, res) {
         upload(req, res, function(err, data) {

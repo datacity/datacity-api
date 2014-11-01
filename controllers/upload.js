@@ -6,7 +6,7 @@ var eventEmitter = new events.EventEmitter();
 var fs = require('fs');
 
 var upload = function (req, res, next, db) {
-    console.log("Requested upload route");
+    console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
         console.log("eventEmitter ON line");
