@@ -3,7 +3,7 @@ var chardet = require("chardet");
 
 var download = function (req, res, next, db) {
     console.log("Requested DOWNLOAD with PUBLIC key = " + req.headers.public_key);
-    db.download('prix_des_carburants_j_7.json', next);
+    db.download(req.headers.file_name, next);
    // return next();
 }
 

@@ -20,9 +20,11 @@ Middleware.prototype.authenticate = function(req, res, next) {
     this.getUser(publicKey, function(data) {
         if (data == null) {                             //Si l'utilisateur n'est pas defini ou introuvable
             req.user_role = 'ANONYME';
+            next();
         }
         else if (data['private_key'] != privateKey) {   //Si la private key est incorrect
             req.user_role = 'ANONYME';
+            next();
         }
         else {                                          //Si l'utilisateur est authentifié
             user = data;

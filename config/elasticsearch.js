@@ -70,7 +70,6 @@ Elasticdb.prototype.download = function(obj, next) {
           if (err) {
             return console.log(err);
           }
-          console.log(data);
           next(null, data);
         });
     }, function (err) {
