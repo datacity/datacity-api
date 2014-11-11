@@ -1,30 +1,31 @@
 var formidable = require("formidable");
-var util = require('util');
-var genericParser = require("genericparser");
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
-var fs = require('fs');
+var chardet = require("chardet");
 
 var upload = function (req, res, next, db) {
     console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
-    var bodyArray = [];
-    eventEmitter.on('line', function (line) {
-        console.log("eventEmitter ON line");
-        bodyArray.push({ index: { _index: 'sources', _type: 'json'} }, line);
+    var form = new formidable.IncomingForm();
+    var file;
+    form.on('file', function (field, fileForm) {
+        file = {
+            name: fileForm.name,
+            path: fileForm.path,
+            uploadedDate: new Date(),
+            lastModifiedDate: fileForm.lastModifiedDate,
+            type: fileForm.type,
+            size: fileForm.size,
+            encoding: chardet.detectFileSync(fileForm.path),
+            publicKey: req.headers.public_key
+        };
+        console.log("New file detected: " + fileForm.name);
     });
-    eventEmitter.on('end', function () {
-        console.log("eventEmitter ON end");
-        db.bulk({
-            body: bodyArray,
-            refresh: true
-        }, function (err, resp, status) {
-            res.json(status, {
-                status: "success",
-                message: "from: " + req.url + ": You uploaded your source with success!"
-            });
-        });
+    form.on('end', function () {
+        db.bulk(file, next);
     });
-    return next(null, 'OK');
+    form.on('error', function (err) {
+        return next("from: " + req.url + " : An error occured on the file upload : " + err, null);// <== ICI A GARDE Et VIRER EN DeSSOUS, voir comment retourner erreur a la place du null
+    });
+    form.parse(req);
+    return next();
 }
 
 module.exports = upload;
