@@ -26,8 +26,7 @@ elasticClient.connect();
  */
 server.use(restify.CORS({'origins': ['*']}));
 server.use(function(req, res, next) {
-    middleware.authenticate(req, res);
-    next();
+    middleware.authenticate(req, res, next);
 });
 
 //Initialisation de respectify

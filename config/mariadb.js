@@ -7,6 +7,7 @@ var Client = require('mariasql');
 function Mariadb() {
 
     this._host = '127.0.0.1';
+    this._database = 'datacity';
     this._username = 'datacity';
     this._password = 'datacity';
     this._client = null;
@@ -20,7 +21,8 @@ Mariadb.prototype.connect = function() {
     this._client.connect({
         host: this._host,
         user: this._username,
-        password: this._password
+        password: this._password,
+        db: this._database
     });
 
     this._client.on('connect', function() {
