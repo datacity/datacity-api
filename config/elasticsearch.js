@@ -23,17 +23,18 @@ Elasticdb.prototype.connect = function() {
     });
 };
 
-Elasticdb.prototype.bulk = function(obj, next) {
-    this._client.create({
-            index: 'files',
-            type: 'file',
-            body: obj,
-            refresh: true,
-        }).then(function (resp) {
-                return next(null, obj);
-            }, function (err) {
-                return next(err, null);
-    });
+Elasticdb.prototype.bulk = function(obj, index, type, next) {
+  this._client.bulk({
+      body: obj,
+      refresh: true
+    }, function (err, resp, status) {
+        if (err) {
+          return next(err, null);
+        }
+        else {
+          return next(null, resp);
+        }
+      });
 };
 
 Elasticdb.prototype.ping = function() {
