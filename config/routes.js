@@ -24,7 +24,11 @@ module.exports = function(server, db) {
 
     //POST - Upload (uploading sources)
     server.post({
-        path: '/upload'
+        path: '/:slugdataset/:slugsource'
+        , params: {
+            slugdataset: 'string',
+            slugsource: 'string'
+        }
         , version: '1.0.0'
     }, function(req, res) {
         upload(req, res, function(err, data) {
@@ -46,8 +50,12 @@ module.exports = function(server, db) {
         }, db);
     });
 
-    server.post({
-        path: '/download'
+    //Download a file
+    server.get({
+        path: '/:slugdataset/download'
+        , params: {
+            slugdataset: 'string'
+        }
         , version: '1.0.0'
     }, function(req, res) {
         download(req, res, function(err, data) {
@@ -60,6 +68,33 @@ module.exports = function(server, db) {
             }
             else if (data != undefined) {
                 console.log("Download success. Responding...");
+                res.json(200, {
+                    status: "success",
+                    data: data
+                });
+                console.log("Response sent !");
+            }
+        }, db);
+    });
+
+    //DELETE
+    server.del({
+        path: '/:slugdataset'
+        , params: {
+            slugdataset: 'string'
+        }
+        , version: '1.0.0'
+    }, function(req, res) {
+        delete(req, res, function(err, data) {
+            if (err) {
+                res.json(200, {
+                    status: "error",
+                    data: err
+                });
+                console.log("! Upload error !");
+            }
+            else if (data != undefined) {
+                console.log("Upload success. Responding...");
                 res.json(200, {
                     status: "success",
                     data: data
