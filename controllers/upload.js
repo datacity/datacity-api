@@ -100,7 +100,7 @@ var upload = function (req, res, next, db) {
         console.log("New file detected: " + fileForm.name);
     });
     form.on('end', function () {
-        storeSourceOnElasticSearch(req, res, "source", db, next);
+        storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next);
         fs.readFile(file.path, function (err, jsonData) {
           if (err) {throw err;}
           console.log("parse = " + JSON.parse(jsonData));

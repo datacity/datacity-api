@@ -15,7 +15,6 @@ function    Elasticdb() {
  * Instantiates client and connects to elasticsearch
  */
 Elasticdb.prototype.connect = function() {
-
     this._client = new elasticsearch.Client({
         host: this._host,
         keepAlive: false,
@@ -32,7 +31,7 @@ Elasticdb.prototype.bulk = function(obj, index, type, next) {
           return next(err, null);
         }
         else {
-          return next(null, resp);
+          return next(null, status);
         }
       });
 };
