@@ -22,18 +22,18 @@ function formatArray(myArray, property) {
 }
 
 
-var generateProperJSON = function (file, id, sourceName) {
+var generateProperJSON = function (file, sourceSlug) {
     //formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     //if (file instanceof Array) {
-        console.log("OK1");
+        console.log("SLUG = " + sourceSlug);
         for (var i in file) {
             var currentObject = file[i];
             var jsonObj = {};
             for (var key in currentObject) {
                     jsonObj[key] = currentObject[key];
             }
-            jsonObj['sourceName'] = sourceName;
+            jsonObj['sourceSlug'] = sourceSlug;
 
             //TODO: LIMITER LA BULK REQUEST A 1000
             eventEmitter.emit('line', jsonObj);
@@ -88,6 +88,7 @@ var upload = function (req, res, next, db) {
     form.on('file', function (field, fileForm) {
         file = {
             name: fileForm.name,
+            slug: req.params.slugsource,
             path: fileForm.path,
             uploadedDate: new Date(),
             lastModifiedDate: fileForm.lastModifiedDate,
@@ -103,38 +104,13 @@ var upload = function (req, res, next, db) {
         fs.readFile(file.path, function (err, jsonData) {
           if (err) {throw err;}
           console.log("parse = " + JSON.parse(jsonData));
-          generateProperJSON(JSON.parse(jsonData), "testID", file.name);
+          generateProperJSON(JSON.parse(jsonData), file.slug);
         });
     });
     form.on('error', function (err) {
         return next("from: " + req.url + " : An error occured on the file upload : " + err, null);// <== ICI A GARDE Et VIRER EN DeSSOUS, voir comment retourner erreur a la place du null
     });
     form.parse(req);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // TESTER LA SECURITE AU NIVEAU DE LA CLE PUBLIQUE
-    // TESTER LE CONTENU ET LE TYPE DU FICHIER EN ENTREE
-    // ENLEVER TOUT SCRIPT QUI POURRAIT ETRE PRESENT DANS LE JSON
-    // if (!req.body || !req.body.jsonData || !req.params.name) {
-    //     next("from: " + req.url + ": Wrong parameters. You need to enter valid jsonData or a valid databiding", null);
-    //     return;
-    // }
-    // storeSourceOnElasticSearch(req, res, req.params.category, next);
-    // generateProperJSON(req.body.jsonData, req.params.id, req.params.name);
 };
 
 module.exports = upload;
