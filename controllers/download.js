@@ -3,6 +3,7 @@ var chardet = require("chardet");
 
 var download = function (req, res, next, db) {
     console.log("Requested DOWNLOAD with PUBLIC key = " + req.headers.public_key);
+    console.log("File format : " + req.headers.accept);
     db.download(req.headers.file_name, next);
    // return next();
 }

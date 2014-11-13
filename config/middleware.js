@@ -11,6 +11,7 @@ function    Middleware(restify, mariaClient) {
  * Fonction d'authentification
  * @param req
  * @param res
+ * @param next
  */
 Middleware.prototype.authenticate = function(req, res, next) {
     var publicKey = req.headers.public_key;
@@ -18,15 +19,11 @@ Middleware.prototype.authenticate = function(req, res, next) {
     var user = null;
 
     this.getUser(publicKey, function(data) {
-        if (data == null) {                             //Si l'utilisateur n'est pas defini ou introuvable
+        if (data == null || data['private_key'] != privateKey) {                             //Si l'utilisateur n'est pas defini ou introuvable
             req.user_role = 'ANONYME';
             next();
         }
-        else if (data['private_key'] != privateKey) {   //Si la private key est incorrect
-            req.user_role = 'ANONYME';
-            next();
-        }
-        else {                                          //Si l'utilisateur est authentifié
+        else {                                                                              //Si l'utilisateur est authentifié
             user = data;
             req.user_role = 'USER';
             next();
@@ -39,6 +36,7 @@ Middleware.prototype.authenticate = function(req, res, next) {
 /**
  * Requete mariaDB pour recuperer les infos du user en utilisant sa publicKey.
  * @param publicKey
+ * @param callback
  * @returns {*}
  */
 Middleware.prototype.getUser = function(publicKey, callback) {
