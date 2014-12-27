@@ -66,7 +66,7 @@ Elasticdb.prototype.download = function(obj, next) {
     }).then(function (resp) {
         var hits = resp.hits.hits;
         fs = require('fs');
-        fs.readFile(hits[0]._source.path, 'utf8', function (err,data) {
+        fs.readFile(hits[0]._source.path, 'utf8', function (err, data) {
           if (err) {
             return console.log(err);
           }

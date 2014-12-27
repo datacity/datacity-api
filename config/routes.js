@@ -1,6 +1,7 @@
 var parser = require("../controllers/parse");
 var upload = require("../controllers/upload");
 var download = require("../controllers/download");
+var remove = require("../controllers/remove");
 
 module.exports = function(server, db) {
     //POST - Parse (uploading sources)
@@ -85,16 +86,16 @@ module.exports = function(server, db) {
         }
         , version: '1.0.0'
     }, function(req, res) {
-        delete(req, res, function(err, data) {
+        remove(req, res, function(err, data) {
             if (err) {
                 res.json(200, {
                     status: "error",
                     data: err
                 });
-                console.log("! Upload error !");
+                console.log("! Delete error !");
             }
             else if (data != undefined) {
-                console.log("Upload success. Responding...");
+                console.log("Delete succeed. Responding...");
                 res.json(200, {
                     status: "success",
                     data: data

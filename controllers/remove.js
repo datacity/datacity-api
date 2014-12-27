@@ -5,8 +5,10 @@
  * @param next
  * @param db
  */
-var del = function (req, res, next, db) {
+var remove = function (req, res, next, db) {
+    var data = {};
     console.log("Requested DELETE with PUBLIC key = " + req.headers.public_key);
+    return next(null, data);
 };
 
-module.exports = del;
+module.exports = remove;
