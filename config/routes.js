@@ -25,10 +25,9 @@ module.exports = function(server, db) {
 
     //POST - Upload (uploading sources)
     server.post({
-        path: '/:slugdataset/:slugsource'
+        path: '/:slugdataset'
         , params: {
             slugdataset: 'string',
-            slugsource: 'string'
         }
         , version: '1.0.0'
     }, function(req, res) {

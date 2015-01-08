@@ -22,7 +22,7 @@ Elasticdb.prototype.connect = function() {
     });
 };
 
-Elasticdb.prototype.bulk = function(obj, index, type, next) {
+Elasticdb.prototype.bulk = function(obj, index, type, next, slugname) {
   this._client.bulk({
       body: obj,
       refresh: true
@@ -31,7 +31,7 @@ Elasticdb.prototype.bulk = function(obj, index, type, next) {
           return next(err, null);
         }
         else {
-          return next(null, status);
+          return next(null, {status: status, slugName: slugname});
         }
       });
 };

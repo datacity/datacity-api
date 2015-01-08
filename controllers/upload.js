@@ -3,6 +3,7 @@ var chardet = require("chardet");
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 var fs = require('fs');
+var slugs = require("slugs");
 
 function arrayObjectIndexOf(myArray, property) {
     if (!(myArray instanceof Array))
@@ -42,7 +43,7 @@ var generateProperJSON = function (file, sourceSlug) {
     //}
 }
 
-var storeSourceOnElasticSearch = function (req, res, type, db, next) {
+var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
         //console.log("New line = " + JSON.stringify(line));
@@ -50,7 +51,7 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next) {
     });
     eventEmitter.on('end', function () {
         //console.log(bodyArray);
-        db.bulk(bodyArray,'sources', type, next);
+        db.bulk(bodyArray,'sources', type, next, slugname);
     });
 }
 
@@ -88,7 +89,7 @@ var upload = function (req, res, next, db) {
     form.on('file', function (field, fileForm) {
         file = {
             name: fileForm.name,
-            slug: req.params.slugsource,
+            slug: slugs(new Date().getTime() + "-" + fileForm.name),
             path: fileForm.path,
             uploadedDate: new Date(),
             lastModifiedDate: fileForm.lastModifiedDate,
@@ -100,7 +101,8 @@ var upload = function (req, res, next, db) {
         console.log("New file detected: " + fileForm.name);
     });
     form.on('end', function () {
-        storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next);
+        console.log("SLUG = " + file.slug);
+        storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next, file.slug);
         fs.readFile(file.path, function (err, jsonData) {
           if (err) {throw err;}
           console.log("parse = " + JSON.parse(jsonData));
@@ -110,6 +112,7 @@ var upload = function (req, res, next, db) {
     form.on('error', function (err) {
         return next("from: " + req.url + " : An error occured on the file upload : " + err, null);// <== ICI A GARDE Et VIRER EN DeSSOUS, voir comment retourner erreur a la place du null
     });
+    console.log(req);
     form.parse(req);
 };
 
