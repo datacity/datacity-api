@@ -2,6 +2,7 @@ var parser = require("../controllers/parse");
 var upload = require("../controllers/upload");
 var download = require("../controllers/download");
 var remove = require("../controllers/remove");
+var getModel = require("../controllers/getModel");
 
 module.exports = function(server, db) {
     //POST - Parse (uploading sources)
@@ -25,7 +26,7 @@ module.exports = function(server, db) {
 
     //POST - Upload (uploading sources)
     server.post({
-        path: '/:slugdataset'
+        path: '/:slugdataset/source'
         , params: {
             slugdataset: 'string',
         }
@@ -33,7 +34,7 @@ module.exports = function(server, db) {
     }, function(req, res) {
         upload(req, res, function(err, data) {
             if (err) {
-                res.json(200, {
+                res.json(400, {
                     status: "error",
                     data: err
                 });
@@ -43,7 +44,7 @@ module.exports = function(server, db) {
                 console.log("Upload success. Responding...");
                 res.json(200, {
                     status: "success",
-                    data: data
+                    slugsource: data
                 });
                 console.log("Response sent !");
             }
@@ -60,7 +61,7 @@ module.exports = function(server, db) {
     }, function(req, res) {
         download(req, res, function(err, data) {
             if (err) {
-                res.json(200, {
+                res.json(400, {
                     status: "error",
                     data: err
                 });
@@ -77,6 +78,33 @@ module.exports = function(server, db) {
         }, db);
     });
 
+    //Get the model
+    server.get({
+        path: '/:slugdataset/:slugsource/model'
+        , params: {
+            slugsource: 'string'
+        }
+        , version: '1.0.0'
+    }, function(req, res) {
+        getModel(req, res, function(err, data) {
+            if (err) {
+                res.json(400, {
+                    status: "error",
+                    data: err
+                });
+                console.log("! Get Model error !");
+            }
+            else if (data != undefined) {
+                console.log("Get Model success. Responding...");
+                res.json(200, {
+                    status: "success",
+                    model: data
+                });
+                console.log("Response sent !");
+            }
+        }, db);
+    });
+
     //DELETE
     server.del({
         path: '/:slugdataset'
@@ -87,7 +115,7 @@ module.exports = function(server, db) {
     }, function(req, res) {
         remove(req, res, function(err, data) {
             if (err) {
-                res.json(200, {
+                res.json(400, {
                     status: "error",
                     data: err
                 });

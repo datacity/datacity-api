@@ -18,11 +18,15 @@ Elasticdb.prototype.connect = function() {
     this._client = new elasticsearch.Client({
         host: this._host,
         keepAlive: false,
-        log: 'trace'
+        log: {
+          type: 'file',
+          level: 'trace',
+          path: 'elasticsearch.log'
+        }
     });
 };
 
-Elasticdb.prototype.bulk = function(obj, index, type, next, slugname) {
+Elasticdb.prototype.bulk = function(obj, index, next, slugname) {
   this._client.bulk({
       body: obj,
       refresh: true
@@ -31,7 +35,7 @@ Elasticdb.prototype.bulk = function(obj, index, type, next, slugname) {
           return next(err, null);
         }
         else {
-          return next(null, {status: status, slugName: slugname});
+          return next(null, slugname);
         }
       });
 };
@@ -77,8 +81,36 @@ Elasticdb.prototype.download = function(obj, next) {
         next(err.message, null);
     });
 };
-
-
+Elasticdb.prototype.getModel = function(type, source, next) {
+  console.log("Search model for " + source);
+  this._client.search({
+    index: 'metadata',
+    type: type,
+    body: {
+      query: {
+        match: {
+          source: source
+        }
+      }
+    }
+  }).then(function (resp) {
+      var hits = resp.hits.hits;
+      next(null, hits[0]["_source"]["model"]);
+  }, function (err) {
+      console.trace(err.message);
+  });
+}
+Elasticdb.prototype.deleteDataset = function(slugname, next) {
+  console.log("DELETE " + slugname);
+  this._client.deleteByQuery({
+    index: ['sources', 'metadata'],
+    q: '_type: ' + slugname,
+  }, function (error, response) {
+    console.log(response);
+    console.log(error);
+    next(error, response);
+  });
+}
 /**
  * Export de la classe
  * @type {Mariadb}

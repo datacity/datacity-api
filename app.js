@@ -24,16 +24,25 @@ elasticClient.connect();
 /**
  * Server Use functions
  */
-server.use(restify.CORS({'origins': ['*']}));
+server
+	.use(restify.CORS({'origins': ['*']}))
+	.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
 server.use(function(req, res, next) {
     middleware.authenticate(req, res, next);
 });
-
 //Initialisation de respectify
 var respect = new Respectify(server);
 
 //Verification des appels aux routes selon les regles definies
 server.use(respect.middleware());
+// server.use(restify.fullResponse())
+// 	.use(restify.bodyParser());
 
 //Definition des routes
 require('./config/routes')(server, elasticClient);

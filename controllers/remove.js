@@ -8,7 +8,7 @@
 var remove = function (req, res, next, db) {
     var data = {};
     console.log("Requested DELETE with PUBLIC key = " + req.headers.public_key);
-    return next(null, data);
+    db.deleteDataset(req.params.slugdataset, next);
 };
 
 module.exports = remove;
