@@ -34,7 +34,7 @@ var generateProperJSON = function (file, sourceSlug) {
             for (var key in currentObject) {
                     jsonObj[key] = currentObject[key];
             }
-            jsonObj['sourceSlug'] = sourceSlug;
+            jsonObj['source'] = sourceSlug;
 
             //TODO: LIMITER LA BULK REQUEST A 1000
             eventEmitter.emit('line', jsonObj);
@@ -49,13 +49,6 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
     console.log("MODEL = " + model);
     bodyArray.push({ index: { _index: 'metadata', _type: slugdataset } }, {model: model, source: slugsource});
     db.bulk(bodyArray,'metadatas', next, slugsource);
-    // eventEmitter.on('line', function (line) {
-    //     // console.log("New line = " + JSON.stringify(line));
-    //     bodyArray.push({ index: { _index: 'metadata', _type: slugname } }, model);
-    // });
-    // eventEmitter.on('end', function () {
-    //     db.bulk(bodyArray,'sources', type, next, slugname);
-    // });
 }
 
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {

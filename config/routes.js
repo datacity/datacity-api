@@ -1,7 +1,8 @@
 var parser = require("../controllers/parse");
 var upload = require("../controllers/upload");
 var download = require("../controllers/download");
-var remove = require("../controllers/remove");
+var removeDataset = require("../controllers/removeDataset");
+var removeSource = require("../controllers/removeSource");
 var getModel = require("../controllers/getModel");
 
 module.exports = function(server, db) {
@@ -105,7 +106,7 @@ module.exports = function(server, db) {
         }, db);
     });
 
-    //DELETE
+    //DELETE dataset
     server.del({
         path: '/:slugdataset'
         , params: {
@@ -113,7 +114,35 @@ module.exports = function(server, db) {
         }
         , version: '1.0.0'
     }, function(req, res) {
-        remove(req, res, function(err, data) {
+        removeDataset(req, res, function(err, data) {
+            if (err) {
+                res.json(400, {
+                    status: "error",
+                    data: err
+                });
+                console.log("! Delete error !");
+            }
+            else if (data != undefined) {
+                console.log("Delete succeed. Responding...");
+                res.json(200, {
+                    status: "success",
+                    data: data
+                });
+                console.log("Response sent !");
+            }
+        }, db);
+    });
+
+        //DELETE SOURCE
+    server.del({
+        path: '/:slugdataset/:slugsource'
+        , params: {
+            slugdataset: 'string',
+            slugsource: 'string'
+        }
+        , version: '1.0.0'
+    }, function(req, res) {
+        removeSource(req, res, function(err, data) {
             if (err) {
                 res.json(400, {
                     status: "error",

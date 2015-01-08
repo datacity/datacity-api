@@ -100,6 +100,9 @@ Elasticdb.prototype.getModel = function(type, source, next) {
       console.trace(err.message);
   });
 }
+
+
+
 Elasticdb.prototype.deleteDataset = function(slugname, next) {
   console.log("DELETE " + slugname);
   this._client.deleteByQuery({
@@ -111,6 +114,19 @@ Elasticdb.prototype.deleteDataset = function(slugname, next) {
     next(error, response);
   });
 }
+
+Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
+  console.log("DELETE " + slugdataset + "/" + slugsource);
+  this._client.deleteByQuery({
+    index: ['sources', 'metadata'],
+    q: 'source: ' + slugsource,
+  }, function (error, response) {
+    console.log(response);
+    console.log(error);
+    next(error, response);
+  });
+}
+
 /**
  * Export de la classe
  * @type {Mariadb}
