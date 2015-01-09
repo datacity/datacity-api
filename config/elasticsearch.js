@@ -81,6 +81,7 @@ Elasticdb.prototype.download = function(obj, next) {
         next(err.message, null);
     });
 };
+
 Elasticdb.prototype.getModel = function(type, source, next) {
   console.log("Search model for " + source);
   this._client.search({
@@ -99,23 +100,21 @@ Elasticdb.prototype.getModel = function(type, source, next) {
   }, function (err) {
       console.trace(err.message);
   });
-}
-
-
+};
 
 Elasticdb.prototype.deleteDataset = function(slugname, next) {
   console.log("DELETE " + slugname);
   this._client.deleteByQuery({
     index: ['sources', 'metadata'],
-    q: '_type: ' + slugname,
+    q: '_type: ' + slugname
   }, function (error, response) {
     console.log(response);
     console.log(error);
     next(error, response);
   });
-}
+};
 
-Elasticdb.prototype.delete = function(index, type, id, next) {
+Elasticdb.prototype.deleteItem = function(index, type, id, next) {
   this._client.delete({
           index: index,
           type: type,
@@ -128,7 +127,7 @@ Elasticdb.prototype.delete = function(index, type, id, next) {
           console.log(error);
           return error;
         });
-}
+};
 
 Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
   console.log("DELETE " + slugdataset + "/" + slugsource);
@@ -149,7 +148,7 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
   }).then(function (resp) {
       var hits = resp.hits.hits;
       hits.forEach(function (i) {
-        that.delete("sources", slugdataset, i["_id"], next);
+        that.deleteItem("sources", slugdataset, i["_id"], next);
       }); 
       that._client.search({
         index: 'sources',
@@ -166,7 +165,7 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
       }).then(function (resp) {
           var hits = resp.hits.hits;
           hits.forEach(function (i) {
-            that.delete("sources", slugdataset, i["_id"], next);
+            that.deleteItem("sources", slugdataset, i["_id"], next);
           }); 
           next(null, hits[0]["_source"]);
       }, function (err) {
@@ -191,13 +190,31 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
   }).then(function (resp) {
       var hits = resp.hits.hits;
       hits.forEach(function (i) {
-        that.delete("metadata", slugdataset, i["_id"], next);
+        that.deleteItem("metadata", slugdataset, i["_id"], next);
       }); 
       next(null, hits[0]["_source"]);
   }, function (err) {
       console.trace(err.message);
   });
-}
+};
+
+
+Elasticdb.prototype.search = function(q, dataset, size, from, next) {
+    console.log('ElasticDB seach method called');
+
+    this._client.search({
+       q: '*' + q + '*',
+       size: size,
+       from: from,
+       type: dataset
+    }).then(function (data) {
+        console.log(data.hits.hits);
+        next(null, data);
+    }, function (error) {
+        console.trace(error.message);
+        next(error, null);
+    });
+};
 
 /**
  * Export de la classe

@@ -27,15 +27,17 @@ elasticClient.connect();
 server
 	.use(restify.CORS({'origins': ['*']}))
 	.use(
-  function crossOrigin(req,res,next){
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    return next();
-  }
-);
-server.use(function(req, res, next) {
-    middleware.authenticate(req, res, next);
-});
+          function crossOrigin(req,res,next){
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "X-Requested-With");
+            return next();
+          }
+    )
+    .use(function(req, res, next) {
+            middleware.authenticate(req, res, next);
+        })
+    .use(restify.queryParser());
+
 //Initialisation de respectify
 var respect = new Respectify(server);
 

@@ -4,6 +4,7 @@ var download = require("../controllers/download");
 var removeDataset = require("../controllers/removeDataset");
 var removeSource = require("../controllers/removeSource");
 var getModel = require("../controllers/getModel");
+var search = require("../controllers/search");
 
 module.exports = function(server, db) {
     //POST - Parse (uploading sources)
@@ -12,9 +13,13 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         parser(req, res, function(err, data) {
-            if (err)
+            if (err) {
+                res.json(400, {
+                    status: "error",
+                    data: err
+                });
                 console.log("! Parse error !");
-            else if (data != undefined) {
+            } else if (data != undefined) {
                 console.log("Parse success. Responding...");
                 res.json(200, {
                      status: "success",
@@ -29,7 +34,7 @@ module.exports = function(server, db) {
     server.post({
         path: '/:slugdataset/source'
         , params: {
-            slugdataset: 'string',
+            slugdataset: 'string'
         }
         , version: '1.0.0'
     }, function(req, res) {
@@ -152,6 +157,30 @@ module.exports = function(server, db) {
             }
             else if (data != undefined) {
                 console.log("Delete succeed. Responding...");
+                res.json(200, {
+                    status: "success",
+                    data: data
+                });
+                console.log("Response sent !");
+            }
+        }, db);
+    });
+
+    //SEARCH
+    server.get({
+        path: '/search'
+        , version: '1.0.0'
+    }, function(req, res) {
+        search(req, res, function(err, data) {
+            if (err) {
+                res.json(400, {
+                    status: "error",
+                    data: err
+                });
+                console.log("! Delete error !");
+            }
+            else if (data != undefined) {
+                console.log("Search succeed. Responding...");
                 res.json(200, {
                     status: "success",
                     data: data
