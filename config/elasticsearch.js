@@ -115,15 +115,87 @@ Elasticdb.prototype.deleteDataset = function(slugname, next) {
   });
 }
 
+Elasticdb.prototype.delete = function(index, type, id, next) {
+  this._client.delete({
+          index: index,
+          type: type,
+          id: id
+        }, function (error, response) {
+          if (response != undefined) {
+            console.log(response);
+            return response;
+          }
+          console.log(error);
+          return error;
+        });
+}
+
 Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
   console.log("DELETE " + slugdataset + "/" + slugsource);
-  this._client.deleteByQuery({
-    index: ['sources', 'metadata'],
-    q: 'source: ' + slugsource,
-  }, function (error, response) {
-    console.log(response);
-    console.log(error);
-    next(error, response);
+  var that = this;
+
+  this._client.search({
+    index: 'sources',
+    type: slugdataset,
+    from: 0,
+    size: 1,
+    body: {
+      query: {
+        match: {
+          slugsource: slugsource
+        }
+      }
+    }
+  }).then(function (resp) {
+      var hits = resp.hits.hits;
+      hits.forEach(function (i) {
+        that.delete("sources", slugdataset, i["_id"], next);
+      }); 
+      that._client.search({
+        index: 'sources',
+        type: slugdataset,
+        from: 0,
+        size: resp.hits.total,
+        body: {
+          query: {
+            match: {
+              slugsource: slugsource
+            }
+          }
+        }
+      }).then(function (resp) {
+          var hits = resp.hits.hits;
+          hits.forEach(function (i) {
+            that.delete("sources", slugdataset, i["_id"], next);
+          }); 
+          next(null, hits[0]["_source"]);
+      }, function (err) {
+          console.trace(err.message);
+      });
+
+  }, function (err) {
+      console.trace(err.message);
+  });
+  that._client.search({
+    index: 'metadata',
+    type: slugdataset,
+    from: 0,
+    size: 1,
+    body: {
+      query: {
+        match: {
+          slugsource: slugsource
+        }
+      }
+    }
+  }).then(function (resp) {
+      var hits = resp.hits.hits;
+      hits.forEach(function (i) {
+        that.delete("metadata", slugdataset, i["_id"], next);
+      }); 
+      next(null, hits[0]["_source"]);
+  }, function (err) {
+      console.trace(err.message);
   });
 }
 
