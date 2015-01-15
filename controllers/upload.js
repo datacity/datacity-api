@@ -36,20 +36,21 @@ var generateProperJSON = function (file, sourceSlug) {
             }
             jsonObj['slugsource'] = sourceSlug;
 
+
             //TODO: LIMITER LA BULK REQUEST A 1000
             eventEmitter.emit('line', jsonObj);
         }
         eventEmitter.emit('end');
     //}
-}
+};
 
 var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, slugdataset, model) {
     var bodyArray = [];
 
     console.log("MODEL = " + model);
-    bodyArray.push({ index: { _index: 'metadata', _type: slugdataset } }, {model: model, slugsource: slugsource});
-    db.bulk(bodyArray,'metadatas', next, slugsource);
-}
+    bodyArray.push({ index: { _index: 'metadata', _type: slugdataset, _id: slugdataset } }, {model: model});
+    db.bulk(bodyArray,'metadata', next, slugsource);
+};
 
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
     var bodyArray = [];
@@ -60,7 +61,7 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
     eventEmitter.on('end', function () {
         db.bulk(bodyArray,'sources', next, slugname);
     });
-}
+};
 
 var upload = function (req, res, next, db) {
     console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);

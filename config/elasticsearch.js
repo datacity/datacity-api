@@ -114,6 +114,19 @@ Elasticdb.prototype.deleteDataset = function(slugname, next) {
   });
 };
 
+Elasticdb.prototype.deleteMetadata = function(dataset, next) {
+
+    console.log("DELETE " + dataset);
+    this._client.deleteByQuery({
+        index: 'metadata',
+        q: '_type: ' + dataset
+    }, function (error, response) {
+        console.log(response);
+        console.log(error);
+        next(error, response);
+    });
+};
+
 Elasticdb.prototype.deleteItem = function(index, type, id, next) {
   this._client.delete({
           index: index,
