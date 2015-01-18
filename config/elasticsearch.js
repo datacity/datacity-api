@@ -86,14 +86,7 @@ Elasticdb.prototype.getModel = function(type, source, next) {
   console.log("Search model for " + source);
   this._client.search({
     index: 'metadata',
-    type: type,
-    body: {
-      query: {
-        match: {
-          source: source
-        }
-      }
-    }
+    type: type
   }).then(function (resp) {
       var hits = resp.hits.hits;
       next(null, hits[0]["_source"]["model"]);

@@ -47,9 +47,11 @@ var generateProperJSON = function (file, sourceSlug) {
 var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, slugdataset, model) {
     var bodyArray = [];
 
-    console.log("MODEL = " + model);
-    bodyArray.push({ index: { _index: 'metadata', _type: slugdataset, _id: slugdataset } }, {model: model});
-    db.bulk(bodyArray,'metadata', next, slugsource);
+    if (model) {
+        console.log("MODEL = " + model);
+        bodyArray.push({ index: { _index: 'metadata', _type: slugdataset, _id: slugdataset } }, {model: model});
+        db.bulk(bodyArray,'metadata', next, slugsource);
+    }
 };
 
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {

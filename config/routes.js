@@ -86,7 +86,7 @@ module.exports = function(server, db) {
 
     //Get the model
     server.get({
-        path: '/:slugdataset/:slugsource/model'
+        path: '/:slugdataset/model'
         , params: {
             slugsource: 'string'
         }
