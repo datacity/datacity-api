@@ -56,29 +56,15 @@ Elasticdb.prototype.ping = function() {
     });
 }
 
-Elasticdb.prototype.download = function(obj, next) {
+Elasticdb.prototype.download = function(dataset, next) {
     this._client.search({
-      index: 'files',
-      type: 'file',
-      body: {
-        query: {
-          match: {
-            name: obj
-          }
-        }
-      }
+      index: 'sources',
+      type: dataset
     }).then(function (resp) {
         var hits = resp.hits.hits;
-        fs = require('fs');
-        fs.readFile(hits[0]._source.path, 'utf8', function (err, data) {
-          if (err) {
-            return console.log(err);
-          }
-          next(null, data);
-        });
+        next(null, hits);
     }, function (err) {
         console.trace(err.message);
-        next(err.message, null);
     });
 };
 
