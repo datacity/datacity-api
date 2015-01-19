@@ -191,11 +191,11 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
 };
 
 
-Elasticdb.prototype.search = function(q, dataset, size, from, next) {
+Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
     console.log('ElasticDB seach method called');
 
     this._client.search({
-       //fields : ["COLUMN1", "COLUMN2"], http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
+       fields : facettes,// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
        q: '*' + q + '*',
        size: size,
        from: from,

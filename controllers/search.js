@@ -10,6 +10,7 @@ var search = function (req, res, next, db) {
 
     var q = '';
     var dataset = '';
+    var facettes;
     var from = 0;
     var size = 10;
 
@@ -25,7 +26,10 @@ var search = function (req, res, next, db) {
     if (req.params.dataset) {
         dataset = req.params.dataset;
     }
-    db.search(q, dataset, size, from, next);
+    if (req.params.facettes) {
+        facettes = req.params.facettes;
+    }
+    db.search(q, dataset, size, from, facettes, next);
 };
 
 module.exports = search;
