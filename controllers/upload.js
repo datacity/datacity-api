@@ -4,6 +4,7 @@ var events = require('events');
 var eventEmitter = new events.EventEmitter();
 var fs = require('fs');
 var slugs = require("slugs");
+var util = require("util");
 
 function arrayObjectIndexOf(myArray, property) {
     if (!(myArray instanceof Array))
@@ -28,6 +29,7 @@ var generateProperJSON = function (file, sourceSlug) {
     //TODO: Vérifier que le databiding est bien formaté correctement
     //if (file instanceof Array) {
         console.log("SLUG = " + sourceSlug);
+        console.log(util.inspect(file));
         for (var i in file) {
             var currentObject = file[i];
             var jsonObj = {};
@@ -38,6 +40,7 @@ var generateProperJSON = function (file, sourceSlug) {
 
 
             //TODO: LIMITER LA BULK REQUEST A 1000
+            console.log("i = " + i);
             eventEmitter.emit('line', jsonObj);
         }
         eventEmitter.emit('end');
@@ -54,23 +57,28 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
     }
 };
 
-var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
+var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, fields) {
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
-        console.log("New line = " + JSON.stringify(line));
+         console.log("New line = " + JSON.stringify(line));
         bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
     });
     eventEmitter.on('end', function () {
         db.bulk(bodyArray,'sources', next, slugname);
+        storeSourceMetaDataOnElasticSearch(req, db, next, slugname, req.params.slugdataset, fields.model);
     });
 };
 
 var upload = function (req, res, next, db) {
     console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
+    var form = new formidable.IncomingForm();
     var slug = slugs(req.params.slugdataset + "-" + new Date().getTime());
-    storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next, slug);
-    generateProperJSON(JSON.parse(req.params.source), slug);
-    storeSourceMetaDataOnElasticSearch(req, db, next, slug, req.params.slugdataset, req.params.model);
+
+    form.parse(req, function(err, fields, files) {
+        //console.log(fields);
+        storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next, slug, fields);
+        generateProperJSON(fields.source, slug);
+    });
 };
 
 module.exports = upload;
