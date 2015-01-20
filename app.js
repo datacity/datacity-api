@@ -63,7 +63,7 @@ var respect = new Respectify(server);
 //Verification des appels aux routes selon les regles definies
 server.use(respect.middleware());
 // server.use(restify.fullResponse())
-// 	.use(restify.bodyParser());
+//server.use(restify.bodyParser());
 
 //Definition des routes
 require('./config/routes')(server, elasticClient);

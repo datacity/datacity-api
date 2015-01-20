@@ -57,7 +57,7 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
-        // console.log("New line = " + JSON.stringify(line));
+        console.log("New line = " + JSON.stringify(line));
         bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
     });
     eventEmitter.on('end', function () {
@@ -67,36 +67,10 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname) {
 
 var upload = function (req, res, next, db) {
     console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
-    var form = new formidable.IncomingForm();
-    var file;
-    form.on('file', function (field, fileForm) {
-        file = {
-            name: fileForm.name,
-            slug: slugs(new Date().getTime() + "-" + fileForm.name),
-            path: fileForm.path,
-            uploadedDate: new Date(),
-            lastModifiedDate: fileForm.lastModifiedDate,
-            type: fileForm.type,
-            size: fileForm.size,
-            encoding: chardet.detectFileSync(fileForm.path),
-            publicKey: req.headers.public_key
-        };
-        console.log("New file detected: " + fileForm.name);
-    });
-    form.on('end', function () {
-        storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next, file.slug);
-        fs.readFile(file.path, function (err, jsonData) {
-          if (err) {throw err;}
-            generateProperJSON(JSON.parse(jsonData), file.slug);
-            storeSourceMetaDataOnElasticSearch(req, db, next, file.slug, req.params.slugdataset, req.params.model);
-        });
-    });
-    form.on('error', function (err) {
-        return next("from: " + req.url + " : An error occured on the file upload : " + err, null);// <== ICI A GARDE Et VIRER EN DeSSOUS, voir comment retourner erreur a la place du null
-    });
-    form.parse(req, function(err, fields, files) {
-      req.params.model = fields.model;
-    });
+    var slug = slugs(req.params.slugdataset + "-" + new Date().getTime());
+    storeSourceOnElasticSearch(req, res, req.params.slugdataset, db, next, slug);
+    generateProperJSON(JSON.parse(req.params.source), slug);
+    storeSourceMetaDataOnElasticSearch(req, db, next, slug, req.params.slugdataset, req.params.model);
 };
 
 module.exports = upload;
