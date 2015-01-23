@@ -11,7 +11,7 @@ var Tools = require('./config/tools');
 /**
  * Inits
  */
-tools = new Tools(false);
+tools = new Tools(true); //A changer si vous souhaitez enlever le mode debug
 var mariaClient = new Mariadb();
 var elasticClient = new Elasticsearch();
 var server = restify.createServer({
