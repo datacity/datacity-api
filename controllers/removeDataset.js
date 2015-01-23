@@ -7,7 +7,7 @@
  */
 var removeDataset = function (req, res, next, db) {
     var data = {};
-    console.log("Requested DELETE with PUBLIC key = " + req.headers.public_key);
+    tools.report("Requested DELETE with PUBLIC key = " + req.headers.public_key);
     db.deleteDataset(req.params.slugdataset, next);
 };
 

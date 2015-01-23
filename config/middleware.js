@@ -20,10 +20,13 @@ Middleware.prototype.authenticate = function(req, res, next) {
 
     this.getUser(publicKey, function(data) {
         if (data == null || data['private_key'] != privateKey) {                             //Si l'utilisateur n'est pas defini ou introuvable
+            tools.report('Utilisateur non authentifié, role anonyme attribué.');
             req.user_role = 'ANONYME';
             next();
         }
         else {                                                                              //Si l'utilisateur est authentifié
+            tools.report('Utilisateur authentifié');
+            tools.report(data);
             user = data;
             req.user_role = 'USER';
             next();
@@ -49,10 +52,10 @@ Middleware.prototype.getUser = function(publicKey, callback) {
                 user = row;
             })
                 .on('error', function(err) {
-                    console.log('Result error: ' + err);
+                    tools.report('Result error: ' + err);
                 })
                 .on('end', function(info) {
-                    console.log('Result finished successfully');
+                    tools.report('Result finished successfully');
                 });
         })
         .on('end', function() {

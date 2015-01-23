@@ -13,20 +13,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         parser(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Parse error !");
-            } else if (data != undefined) {
-                console.log("Parse success. Responding...");
-                res.json(200, {
-                     status: "success",
-                     data: data
-                    });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         });
     });
 
@@ -39,21 +26,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         upload(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Upload error !");
-            }
-            else if (data != undefined) {
-                console.log("Upload success. Responding...");
-                res.json(200, {
-                    status: "success",
-                    slugsource: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 
@@ -66,21 +39,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         download(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Download error !");
-            }
-            else if (data != undefined) {
-                console.log("Download success. Responding...");
-                res.json(200, {
-                    status: "success",
-                    data: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 
@@ -93,21 +52,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         getModel(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Get Model error !");
-            }
-            else if (data != undefined) {
-                console.log("Get Model success. Responding...");
-                res.json(200, {
-                    status: "success",
-                    model: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 
@@ -120,21 +65,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         removeDataset(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Delete error !");
-            }
-            else if (data != undefined) {
-                console.log("Delete succeed. Responding...");
-                res.json(200, {
-                    status: "success",
-                    data: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 
@@ -148,21 +79,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         removeSource(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Delete error !");
-            }
-            else if (data != undefined) {
-                console.log("Delete succeed. Responding...");
-                res.json(200, {
-                    status: "success",
-                    data: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 
@@ -172,21 +89,7 @@ module.exports = function(server, db) {
         , version: '1.0.0'
     }, function(req, res) {
         search(req, res, function(err, data) {
-            if (err) {
-                res.json(400, {
-                    status: "error",
-                    data: err
-                });
-                console.log("! Delete error !");
-            }
-            else if (data != undefined) {
-                console.log("Search succeed. Responding...");
-                res.json(200, {
-                    status: "success",
-                    data: data
-                });
-                console.log("Response sent !");
-            }
+            tools.answer(req, res, err, data);
         }, db);
     });
 };

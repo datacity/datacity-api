@@ -6,10 +6,12 @@ var Respectify = require('respectify');
 var Elasticsearch = require('./config/elasticsearch');
 var Mariadb = require('./config/mariadb');
 var Middleware = require('./config/middleware');
+var Tools = require('./config/tools');
 
 /**
  * Inits
  */
+tools = new Tools(false);
 var mariaClient = new Mariadb();
 var elasticClient = new Elasticsearch();
 var server = restify.createServer({
@@ -20,6 +22,7 @@ var middleware = new Middleware(server, mariaClient);
 
 mariaClient.connect();
 elasticClient.connect();
+
 
 function unknownMethodHandler(req, res) {
   if (req.method.toLowerCase() === 'options') {
@@ -62,12 +65,10 @@ var respect = new Respectify(server);
 
 //Verification des appels aux routes selon les regles definies
 server.use(respect.middleware());
-// server.use(restify.fullResponse())
-//server.use(restify.bodyParser());
 
 //Definition des routes
 require('./config/routes')(server, elasticClient);
 
 server.listen(4567, function() {
-  console.log('%s listening at %s', server.name, server.url);
+  tools.report(server.name + ' listening at ' + server.url);
 });

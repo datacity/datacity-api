@@ -5,7 +5,7 @@ var chardet				=	require("chardet");
 var fs 					=	require('fs');
 
 var parse = function (req, res, next) {
-	console.log("Requested PARSE with PUBLIC key = " + req.headers.public_key);
+    tools.report("Requested PARSE with PUBLIC key = " + req.headers.public_key);
 	var form = new formidable.IncomingForm();
 	var file;
  	form.on('file', function (field, fileForm) {
@@ -19,7 +19,7 @@ var parse = function (req, res, next) {
 			encoding: chardet.detectFileSync(fileForm.path),
 			publicKey: req.params.publicKey
 		};
-		console.log("New file detected: " + fileForm.name);
+        tools.report("New file detected: " + fileForm.name);
 	});
 	form.on('end', function () {
 		var ext = file.name.split('.').pop().toLowerCase();
@@ -34,7 +34,7 @@ var parse = function (req, res, next) {
 			return next(new Error("the file [" + name + "] can't be parsed. Incompatible file type."), null);
 		}
 		parser.on("error", function (err) {
-			console.log("Parser error ! ext = " + ext + " and err = " + err + " // path=" + file.path);
+            tools.report("Parser error ! ext = " + ext + " and err = " + err + " // path=" + file.path);
 			return next(new Error(err), null);
 		});
 		parser.parse(file.path, false, function (result, index) {	

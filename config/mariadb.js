@@ -26,16 +26,16 @@ Mariadb.prototype.connect = function() {
     });
 
     this._client.on('connect', function() {
-        console.log('Maria Client connected');
+        tools.report('Maria Client connected');
     })
         .on('error', function(err) {
-            console.log('Client error: ' + err);
+            tools.report('Client error: ' + err);
         })
         .on('close', function(hadError) {
             if (hadError)
-                console.log('Client closed with errors');
+                tools.report('Client closed with errors');
             else
-                console.log('Client closed without errors');
+                tools.report('Client closed without errors');
         });
 };
 

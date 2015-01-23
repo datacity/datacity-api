@@ -6,7 +6,7 @@
  * @param db
  */
 var search = function (req, res, next, db) {
-    console.log("Requested SEARCH with PUBLIC key = " + req.headers.public_key);
+    tools.report("Requested SEARCH with PUBLIC key = " + req.headers.public_key);
 
     var q = '';
     var dataset = '';
