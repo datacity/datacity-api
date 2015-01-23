@@ -33,7 +33,6 @@ Middleware.prototype.authenticate = function(req, res, next) {
         }
     });
 
-
 };
 
 /**

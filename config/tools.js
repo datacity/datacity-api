@@ -24,8 +24,9 @@ Tools.prototype.report = function(message) {
  * @param data
  */
 Tools.prototype.answer = function(req, res, err, data) {
+    this.report(req.user_role + ' requested ' + req.route.path + '...');
     if (err) {
-        res.json(400, {
+        res.json(err == 'You must login' ? 401 : 400, {
             status: "error",
             data: err
         });

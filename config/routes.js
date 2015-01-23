@@ -25,9 +25,13 @@ module.exports = function(server, db) {
         }
         , version: '1.0.0'
     }, function(req, res) {
-        upload(req, res, function(err, data) {
-            tools.answer(req, res, err, data);
-        }, db);
+        if (req.user_role != 'USER') {
+            tools.answer(req, res, 'You must login', null);
+        } else {
+            upload(req, res, function(err, data) {
+                tools.answer(req, res, err, data);
+            }, db);
+        }
     });
 
     //Download a file
@@ -64,12 +68,16 @@ module.exports = function(server, db) {
         }
         , version: '1.0.0'
     }, function(req, res) {
-        removeDataset(req, res, function(err, data) {
-            tools.answer(req, res, err, data);
-        }, db);
+        if (req.user_role != 'USER') {
+            tools.answer(req, res, 'You must login', null);
+        } else {
+            removeDataset(req, res, function(err, data) {
+                tools.answer(req, res, err, data);
+            }, db);
+        }
     });
 
-        //DELETE SOURCE
+    //DELETE SOURCE
     server.del({
         path: '/:slugdataset/:slugsource'
         , params: {
@@ -78,9 +86,13 @@ module.exports = function(server, db) {
         }
         , version: '1.0.0'
     }, function(req, res) {
-        removeSource(req, res, function(err, data) {
-            tools.answer(req, res, err, data);
-        }, db);
+        if (req.user_role != 'USER') {
+            tools.answer(req, res, 'You must login', null);
+        } else {
+            removeSource(req, res, function(err, data) {
+                tools.answer(req, res, err, data);
+            }, db);
+        }
     });
 
     //SEARCH
@@ -88,8 +100,8 @@ module.exports = function(server, db) {
         path: '/search'
         , version: '1.0.0'
     }, function(req, res) {
-        search(req, res, function(err, data) {
-            tools.answer(req, res, err, data);
-        }, db);
+            search(req, res, function(err, data) {
+                tools.answer(req, res, err, data);
+            }, db);
     });
 };

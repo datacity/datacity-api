@@ -201,7 +201,6 @@ Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
        from: from,
        type: dataset
     }).then(function (data) {
-        tools.report(data.hits.hits);
         next(null, data);
     }, function (error) {
         tools.report(error.message);
