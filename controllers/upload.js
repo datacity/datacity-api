@@ -28,30 +28,29 @@ var generateProperJSON = function (file, sourceSlug) {
     //formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     //if (file instanceof Array) {
-        //console.log("SLUG = " + sourceSlug);
-        //console.log(util.inspect(file));
-        for (var i in file) {
-            var currentObject = file[i];
-            var jsonObj = {};
-            for (var key in currentObject) {
-                    jsonObj[key] = currentObject[key];
-            }
-            jsonObj['slugsource'] = sourceSlug;
-
-
-            //TODO: LIMITER LA BULK REQUEST A 1000
-            //console.log("i = " + i);
-            eventEmitter.emit('line', jsonObj);
+    tools.report("SLUG = " + sourceSlug);
+    tools.report(util.inspect(file));
+    for (var i in file) {
+        var currentObject = file[i];
+        var jsonObj = {};
+        for (var key in currentObject) {
+                jsonObj[key] = currentObject[key];
         }
-        eventEmitter.emit('end');
-    //}
+        jsonObj['slugsource'] = sourceSlug;
+
+
+        //TODO: LIMITER LA BULK REQUEST A 1000
+        tools.report("i = " + i);
+        eventEmitter.emit('line', jsonObj);
+    }
+    eventEmitter.emit('end');
 };
 
 var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, slugdataset, model) {
     var bodyArray = [];
 
     if (model) {
-        //console.log("MODEL = " + model);
+        tools.report("MODEL = " + model);
         bodyArray.push({ index: { _index: 'metadata', _type: slugdataset, _id: slugdataset } }, {model: model});
         db.bulk(bodyArray,'metadata', next, slugsource);
     }
@@ -60,7 +59,7 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, fields) {
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
-         //console.log("New line = " + JSON.stringify(line));
+        tools.report("New line = " + JSON.stringify(line));
         bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
     });
     eventEmitter.on('end', function () {
@@ -70,7 +69,7 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, f
 };
 
 var upload = function (req, res, next, db) {
-    console.log("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
+    tools.report("Requested UPLOAD with PUBLIC key = " + req.headers.public_key);
     var form = new formidable.IncomingForm();
     var slug = slugs(req.params.slugdataset + "-" + new Date().getTime());
 

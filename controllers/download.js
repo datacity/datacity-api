@@ -2,8 +2,8 @@ var formidable = require("formidable");
 var chardet = require("chardet");
 
 var download = function (req, res, next, db) {
-    console.log("Requested DOWNLOAD with PUBLIC key = " + req.headers.public_key);
-    console.log("File format : " + req.headers.accept);
+    tools.report("Requested DOWNLOAD with PUBLIC key = " + req.headers.public_key);
+    tools.report("File format : " + req.headers.accept);
     db.download(req.params.slugdataset, next);
    // return next();
 }

@@ -69,7 +69,7 @@ Elasticdb.prototype.download = function(dataset, next) {
 };
 
 Elasticdb.prototype.getModel = function(type, source, next) {
-  console.log("Search model for " + source);
+  tools.report("Search model for " + source);
   this._client.search({
     index: 'metadata',
     type: type
@@ -82,26 +82,26 @@ Elasticdb.prototype.getModel = function(type, source, next) {
 };
 
 Elasticdb.prototype.deleteDataset = function(slugname, next) {
-  console.log("DELETE " + slugname);
+  tools.report("DELETE " + slugname);
   this._client.deleteByQuery({
     index: ['sources', 'metadata'],
     q: '_type: ' + slugname
   }, function (error, response) {
-    console.log(response);
-    console.log(error);
+    tools.report(response);
+    tools.report(error);
     next(error, response);
   });
 };
 
 Elasticdb.prototype.deleteMetadata = function(dataset, next) {
 
-    console.log("DELETE " + dataset);
+    tools.report("DELETE " + dataset);
     this._client.deleteByQuery({
         index: 'metadata',
         q: '_type: ' + dataset
     }, function (error, response) {
-        console.log(response);
-        console.log(error);
+        tools.report(response);
+        tools.report(error);
         next(error, response);
     });
 };
@@ -113,16 +113,16 @@ Elasticdb.prototype.deleteItem = function(index, type, id, next) {
           id: id
         }, function (error, response) {
           if (response != undefined) {
-            console.log(response);
+              tools.report(response);
             return response;
           }
-          console.log(error);
+          tools.report(error);
           return error;
         });
 };
 
 Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
-  console.log("DELETE " + slugdataset + "/" + slugsource);
+  tools.report("DELETE " + slugdataset + "/" + slugsource);
   var that = this;
 
   this._client.search({
@@ -192,7 +192,7 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
 
 
 Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
-    console.log('ElasticDB seach method called');
+    tools.report('ElasticDB search method called');
 
     this._client.search({
        fields : facettes,// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
@@ -201,10 +201,9 @@ Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
        from: from,
        type: dataset
     }).then(function (data) {
-        console.log(data.hits.hits);
         next(null, data);
     }, function (error) {
-        console.trace(error.message);
+        tools.report(error.message);
         next(error, null);
     });
 };
