@@ -28,8 +28,8 @@ var generateProperJSON = function (file, sourceSlug) {
     //formatArray(databiding);
     //TODO: Vérifier que le databiding est bien formaté correctement
     //if (file instanceof Array) {
-        console.log("SLUG = " + sourceSlug);
-        console.log(util.inspect(file));
+        //console.log("SLUG = " + sourceSlug);
+        //console.log(util.inspect(file));
         for (var i in file) {
             var currentObject = file[i];
             var jsonObj = {};
@@ -40,7 +40,7 @@ var generateProperJSON = function (file, sourceSlug) {
 
 
             //TODO: LIMITER LA BULK REQUEST A 1000
-            console.log("i = " + i);
+            //console.log("i = " + i);
             eventEmitter.emit('line', jsonObj);
         }
         eventEmitter.emit('end');
@@ -51,7 +51,7 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
     var bodyArray = [];
 
     if (model) {
-        console.log("MODEL = " + model);
+        //console.log("MODEL = " + model);
         bodyArray.push({ index: { _index: 'metadata', _type: slugdataset, _id: slugdataset } }, {model: model});
         db.bulk(bodyArray,'metadata', next, slugsource);
     }
@@ -60,7 +60,7 @@ var storeSourceMetaDataOnElasticSearch = function (req, db, next, slugsource, sl
 var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, fields) {
     var bodyArray = [];
     eventEmitter.on('line', function (line) {
-         console.log("New line = " + JSON.stringify(line));
+         //console.log("New line = " + JSON.stringify(line));
         bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
     });
     eventEmitter.on('end', function () {
