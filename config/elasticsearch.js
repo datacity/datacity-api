@@ -56,16 +56,38 @@ Elasticdb.prototype.ping = function() {
     });
 }
 
-Elasticdb.prototype.download = function(dataset, next) {
-    this._client.search({
-      index: 'sources',
-      type: dataset
+Elasticdb.prototype.download = function(slugdataset, format, next) {
+  var that = this;
+  var length = 0;
+
+  this._client.count({
+    index: 'sources',
+    type: slugdataset
     }).then(function (resp) {
-        var hits = resp.hits.hits;
-        next(null, hits);
+     length = resp.count;
+      that._client.search({
+        index: 'sources',
+        type: slugdataset,
+        from: 0,
+        size: length
+      }).then(function (resp) {
+          var genericParser = require("genericparser");
+          var hits = resp.hits.hits;
+          if (format == "json")
+            return next(null, genericParser.exportJSON(hits));
+          else if (format == "xml")
+            return next(null, genericParser.exportXML(hits));
+          else if (format == "csv")
+            return next(null, genericParser.exportCSV(hits));
+          return next("Invalid format requested.", null);
     }, function (err) {
         console.trace(err.message);
+        return next("ElacticSearch error: " + err.message, null);
     });
+
+  }, function (err) {
+      console.trace(err.message);
+  });
 };
 
 Elasticdb.prototype.getModel = function(type, source, next) {

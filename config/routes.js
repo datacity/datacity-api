@@ -36,14 +36,14 @@ module.exports = function(server, db) {
 
     //Download a file
     server.get({
-        path: '/:slugdataset/download'
+        path: '/:slugdataset/download/:format'
         , params: {
             slugdataset: 'string'
         }
         , version: '1.0.0'
     }, function(req, res) {
         download(req, res, function(err, data) {
-            tools.answer(req, res, err, data);
+            tools.answerFile(req, res, err, data);
         }, db);
     });
 

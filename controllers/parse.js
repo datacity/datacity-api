@@ -12,6 +12,7 @@ var parse = function (req, res, next) {
 		file = {
 			name: fileForm.name,
 			path: fileForm.path,
+			ext: fileForm.name.substring(fileForm.name.lastIndexOf('.') + 1, fileForm.name.length),
 			uploadedDate: new Date(),
 			lastModifiedDate: fileForm.lastModifiedDate,
 			type: fileForm.type,
@@ -22,24 +23,11 @@ var parse = function (req, res, next) {
         tools.report("New file detected: " + fileForm.name);
 	});
 	form.on('end', function () {
-		var ext = file.name.split('.').pop().toLowerCase();
-		var parser = genericParser(ext);
-
-
-		if (ext.length == 0) {
-			return next(new Error('Unable to get the file extension'), null);
-		}
-		var parser = genericParser(ext);
-		if (!parser) {
-			return next(new Error("the file [" + name + "] can't be parsed. Incompatible file type."), null);
-		}
-		parser.on("error", function (err) {
-            tools.report("Parser error ! ext = " + ext + " and err = " + err + " // path=" + file.path);
-			return next(new Error(err), null);
-		});
-		parser.parse(file.path, false, function (result, index) {	
-			if (result && result != undefined)
+		console.log("EXT = " + file.ext);
+		genericParser.parse(file.path, file.ext, function (result) {	
+			if (result !== undefined && result.length > 0)
 				return next(null, result);
+			return next("Empty data -- Parse Error", null);
 		});
 	});
 	form.on('error', function (err) {
