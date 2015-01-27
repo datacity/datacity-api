@@ -217,6 +217,8 @@ Elasticdb.prototype.deleteSource = function(slugdataset, slugsource, next) {
 
 Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
     tools.report('ElasticDB search method called');
+    var that = this;
+    var genericparser = require("genericparser");
 
     this._client.search({
        fields : facettes,// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
@@ -225,7 +227,22 @@ Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
        from: from,
        type: dataset
     }).then(function (data) {
-        next(null, data);
+      if (size != 0) {
+        next(null, genericparser.clean(data["hits"]["hits"]));
+      } else {
+          that._client.search({
+            fields : facettes,
+            q: '*' + q + '*',
+            from: from,
+            type: dataset,
+            size: data.hits.total,
+          }).then(function (resp) {
+            next(null, genericparser.clean(resp["hits"]["hits"]));
+          }, function (err) {
+              next(err, null);
+              console.trace(err.message);
+          });
+      }
     }, function (error) {
         tools.report(error.message);
         next(error, null);

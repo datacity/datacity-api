@@ -12,7 +12,7 @@ var search = function (req, res, next, db) {
     var facettes;
     var from = 0;
     var size = 10;
-
+    
     if (req.params.q) {
         q = req.params.q;
     }
