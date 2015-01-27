@@ -77,14 +77,16 @@ Elasticdb.prototype.download = function(slugdataset, format, next) {
             return next(null, genericParser.exportJSON(hits));
           else if (format == "xml")
             return next(null, genericParser.exportXML(hits));
-          else if (format == "csv")
-            return next(null, genericParser.exportCSV(hits));
+          else if (format == "csv") {
+            return genericParser.exportCSV(hits, function (result) {
+              next(null, result);
+            });
+          }
           return next("Invalid format requested.", null);
     }, function (err) {
         console.trace(err.message);
         return next("ElacticSearch error: " + err.message, null);
     });
-
   }, function (err) {
       console.trace(err.message);
   });

@@ -59,7 +59,7 @@ Tools.prototype.answerFile = function(req, res, err, data) {
         });
         this.report('Error for ' + req.route.path + ' request with ' + req.route.method + ' method.');
     } else if (data != undefined) {
-        var resData = new Buffer(util.inspect(data));
+        var resData = new Buffer(data);
         this.report('Success for ' + req.route.path + ' request with ' + req.route.method + ' method.');
         res.writeHead(200, { 'Content-Type': 'application/' + req.params.format,
                           'Content-Length': resData.length,
