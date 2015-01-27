@@ -221,6 +221,7 @@ Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
     var genericparser = require("genericparser");
 
     this._client.search({
+       index: "sources",
        fields : facettes,// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-fields.html
        q: '*' + q + '*',
        size: size,
@@ -231,6 +232,7 @@ Elasticdb.prototype.search = function(q, dataset, size, from, facettes, next) {
         next(null, genericparser.clean(data["hits"]["hits"]));
       } else {
           that._client.search({
+            index: "sources",
             fields : facettes,
             q: '*' + q + '*',
             from: from,
