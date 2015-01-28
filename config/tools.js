@@ -67,14 +67,12 @@ Tools.prototype.answerFile = function(req, res, err, data) {
                           'Content-Length': resData.length,
                           'Content-Disposition': 'attachment;filename=' + req.params.slugdataset + '.' + req.params.format });
         res.write(resData, "utf-8");
-        res.end();
         this.report('Response sent !');
     } else {
        res.json(400, {
             status: "error",
             data: "No data found for dataset " + req.params.slugdataset
         });
-       res.end();
     }
 };
 

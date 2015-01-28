@@ -65,7 +65,9 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, f
     eventEmitter.on('end', function () {
         db.bulkNoNext(bodyArray,'sources', slugname);
         storeSourceMetaDataOnElasticSearch(req, db, next, slugname, req.params.slugdataset, fields.model);
+        eventEmitter.removeAllListeners();
     });
+    //next(null, slugname);
 };
 
 var upload = function (req, res, next, db) {
