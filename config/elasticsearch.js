@@ -40,6 +40,20 @@ Elasticdb.prototype.bulk = function(obj, index, next, slugname) {
       });
 };
 
+Elasticdb.prototype.bulkNoNext = function(obj, index, slugname) {
+  this._client.bulk({
+      body: obj,
+      refresh: true
+    }, function (err, resp, status) {
+        if (err) {
+          return false;
+        }
+        else {
+          return true;
+        }
+      });
+};
+
 Elasticdb.prototype.ping = function() {
     this._client.ping({
       // ping usually has a 100ms timeout

@@ -63,7 +63,7 @@ var storeSourceOnElasticSearch = function (req, res, type, db, next, slugname, f
         bodyArray.push({ index: { _index: 'sources', _type: type } }, line);
     });
     eventEmitter.on('end', function () {
-        db.bulk(bodyArray,'sources', next, slugname);
+        db.bulkNoNext(bodyArray,'sources', slugname);
         storeSourceMetaDataOnElasticSearch(req, db, next, slugname, req.params.slugdataset, fields.model);
     });
 };
