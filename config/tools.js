@@ -31,6 +31,7 @@ Tools.prototype.answer = function(req, res, err, data) {
             status: "error",
             data: err
         });
+        res.end();
         this.report('Error for ' + req.route.path + ' request with ' + req.route.method + ' method.');
     } else if (data != undefined) {
         this.report('Success for ' + req.route.path + ' request with ' + req.route.method + ' method.');
@@ -38,6 +39,7 @@ Tools.prototype.answer = function(req, res, err, data) {
             status: "success",
             data: data
         });
+        res.end();
         this.report('Response sent !');
     }
 };
@@ -66,13 +68,13 @@ Tools.prototype.answerFile = function(req, res, err, data) {
                           'Content-Disposition': 'attachment;filename=' + req.params.slugdataset + '.' + req.params.format });
         res.write(resData, "utf-8");
         res.end();
-
         this.report('Response sent !');
     } else {
        res.json(400, {
             status: "error",
             data: "No data found for dataset " + req.params.slugdataset
-        }); 
+        });
+       res.end();
     }
 };
 

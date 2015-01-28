@@ -89,6 +89,7 @@ Elasticdb.prototype.download = function(slugdataset, format, next) {
     });
   }, function (err) {
       console.trace(err.message);
+      return next("ElacticSearch error: " + err.message, null);
   });
 };
 

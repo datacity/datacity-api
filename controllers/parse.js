@@ -23,7 +23,6 @@ var parse = function (req, res, next) {
         tools.report("New file detected: " + fileForm.name);
 	});
 	form.on('end', function () {
-		console.log("EXT = " + file.ext);
 		genericParser.parse(file.path, file.ext, function (result) {	
 			if (result !== undefined && result.length > 0)
 				return next(null, result);
